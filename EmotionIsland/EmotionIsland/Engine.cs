@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,12 +13,14 @@ namespace EmotionIsland
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class Engine : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public Game1()
+        private World world;
+
+        public Engine()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -47,7 +48,9 @@ namespace EmotionIsland
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            TextureBin.LoadContent(Content);
+
+            this.world = new World();
         }
 
         /// <summary>
@@ -69,8 +72,9 @@ namespace EmotionIsland
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+            Input.Update();
 
-            // TODO: Add your update logic here
+            this.world.Update();
 
             base.Update(gameTime);
         }
@@ -83,7 +87,11 @@ namespace EmotionIsland
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            this.world.Draw(spriteBatch);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
