@@ -1,0 +1,11 @@
+# Common files to ignore
+*.swp
+*.zip
+*.suo
+*.user
+EmotionIsland/EmotionIsland/bin
+EmotionIsland/EmotionIslandContent/bin
+EmotionIsland/EmotionIsland/obj
+EmotionIsland/EmotionIslandContent/obj
+*.cachefile
+*.ccgame
