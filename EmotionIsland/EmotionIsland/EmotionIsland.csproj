@@ -82,6 +82,7 @@
     <Compile Include="Engine.cs" />
     <Compile Include="TextureBin.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="EmotionIsland.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

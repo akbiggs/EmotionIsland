@@ -13,14 +13,14 @@ namespace EmotionIsland
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Engine : Microsoft.Xna.Framework.Game
+    public class EmotionIsland : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         private World world;
 
-        public Engine()
+        public EmotionIsland()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";

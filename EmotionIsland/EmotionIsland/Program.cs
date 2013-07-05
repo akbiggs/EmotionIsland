@@ -10,7 +10,7 @@ namespace EmotionIsland
         /// </summary>
         static void Main(string[] args)
         {
-            using (Engine game = new Engine())
+            using (EmotionIsland game = new EmotionIsland())
             {
                 game.Run();
             }
