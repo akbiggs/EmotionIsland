@@ -12,11 +12,29 @@ namespace EmotionIsland
         {
         }
 
+        public override void HappyUpdate()
+        {
+            this.NextPosition = this.EmotionalTarget.Position;
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(5, 2))
+            {
+                this.Love(this.EmotionalTarget);
+            }
+
+            base.HappyUpdate();
+        }
+
+        private void Love(GameObject target)
+        {
+            if (target is LivingObject)
+            {
+                ((LivingObject)target).Heal();
+            }
+        }
+
         public override void AngryUpdate()
         {
             this.NextPosition = this.EmotionalTarget.Position;
-            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(10, 2) &&
-                EmotionalTarget.IsAlive)
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(10, 2))
             {
                 this.Attack(this.EmotionalTarget);
             }
@@ -31,6 +49,11 @@ namespace EmotionIsland
 
         public override void TerrifiedUpdate()
         {
+            Vector2 fleeDirection = -DirectionToTarget;
+            if (Vector2.DistanceSquared(this.Position, this.EmotionalTarget.Position) < Math.Pow(200, 2))
+            {
+                this.NextPosition = this.EmotionalTarget.Position + 200*fleeDirection;
+            }
             base.TerrifiedUpdate();
         }
     }
