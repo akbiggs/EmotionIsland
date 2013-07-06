@@ -23,6 +23,7 @@ namespace EmotionIsland
         int height;
         int[] tiles;
         int[] tempTiles;
+        bool drawTemp;
 
         long animationTimer;
         int animationCounter;
@@ -40,7 +41,7 @@ namespace EmotionIsland
             this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
 
             GenerateWorld();
-
+            drawTemp = false;
             this.villagers.Add(new Villager(this, new Vector2(40, 80), EmotionType.Angry));
             this.villagers.Add(new Villager(this, new Vector2(40, 120), EmotionType.Sad));
             this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
@@ -118,8 +119,41 @@ namespace EmotionIsland
                 }
             }
 
+            //Create lakes
+            int lakes = rand.Next(2, 5);
+            for (int l = 0; l < lakes; l++)
+            {
+                Vector2 origin = new Vector2(0, 0);
+                while (tempTiles[(int)origin.X + (int)origin.Y * width] != (int)BaseTiles.Grass)
+                {
+                    origin.X = rand.Next(0, width);
+                    origin.Y = rand.Next(0, height);
+                }
+                recursiveGrowth((int)origin.X, (int)origin.Y, (int)BaseTiles.Water, (int)BaseTiles.Grass, rand.Next(20, 100));
+            }
+
+            //Create beaches
+            for (int r = 0; r < height; r++)
+            {
+                for (int c = 0; c < width; c++)
+                {
+                    //Create beach
+                    if (checkTile(c, r, (int)BaseTiles.Grass))
+                    {
+                        for (int d = 1; d < 5; d++)
+                        {
+                            if (checkTile(c + d, r, (int)BaseTiles.Water) || checkTile(c - d, r, (int)BaseTiles.Water) ||
+                            checkTile(c, r + d, (int)BaseTiles.Water) || checkTile(c, r - d, (int)BaseTiles.Water) ||
+                            checkTile(c + d, r + d, (int)BaseTiles.Water) || checkTile(c - d, r + d, (int)BaseTiles.Water) ||
+                            checkTile(c + d, r - d, (int)BaseTiles.Water) || checkTile(c - d, r - d, (int)BaseTiles.Water))
+                                tempTiles[r * width + c] = (int)BaseTiles.Sand;
+                        }
+                    }
+                }
+            }
+
             //Create mountains
-            int mountains = rand.Next(1, 5);
+            int mountains = rand.Next(2, 5);
             for (int m = 0; m < mountains; m++)
             {
                 Vector2 origin = new Vector2(0, 0);
@@ -128,35 +162,22 @@ namespace EmotionIsland
                     origin.X = rand.Next(0, width);
                     origin.Y = rand.Next(0, height);
                 }
-                tempTiles[(int)origin.X + (int)origin.Y * width] = (int)BaseTiles.Mountain;
-
-                tempTiles[(int)origin.X + (int)origin.Y * width + 1] = (int)BaseTiles.Mountain;
-                tempTiles[(int)origin.X + (int)origin.Y * width + 2] = (int)BaseTiles.Mountain;
+                recursiveGrowth((int)origin.X, (int)origin.Y, (int)BaseTiles.Mountain, (int)BaseTiles.Grass, rand.Next(20, 500));
             }
 
-
-            //Paint tiles.
+            //Normalize tiles
             bool rerun = true;
+            int normalCounter = 0;
             while (rerun)
             {
+                normalCounter++;
+                if (normalCounter == 20)
+                    break;
                 rerun = false;
                 for (int r = 0; r < height; r++)
                 {
                     for (int c = 0; c < width; c++)
                     {
-                        //Create beach
-                        if (checkTile(c, r, (int)BaseTiles.Grass))
-                        {
-                            for (int d = 1; d < 5; d++)
-                            {
-                                if (checkTile(c + d, r, (int)BaseTiles.Water) || checkTile(c - d, r, (int)BaseTiles.Water) ||
-                                checkTile(c, r + d, (int)BaseTiles.Water) || checkTile(c, r - d, (int)BaseTiles.Water) ||
-                                checkTile(c + d, r + d, (int)BaseTiles.Water) || checkTile(c - d, r + d, (int)BaseTiles.Water) ||
-                                checkTile(c + d, r - d, (int)BaseTiles.Water) || checkTile(c - d, r - d, (int)BaseTiles.Water))
-                                    tempTiles[r * width + c] = (int)BaseTiles.Sand;
-                            }
-                        }
-
                         //Normalize beach edges vertically
                         if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c, r - 1, (int)BaseTiles.Water) &&
                             checkTile(c, r + 1, (int)BaseTiles.Water))
@@ -170,6 +191,22 @@ namespace EmotionIsland
                             checkTile(c + 1, r, (int)BaseTiles.Water))
                         {
                             tempTiles[r * width + c] = (int)BaseTiles.Water;
+                            rerun = true;
+                        }
+
+                        //Get rid of vertical water ridges
+                        if (checkTile(c, r, (int)BaseTiles.Water) && checkTile(c, r + 1, (int)BaseTiles.Sand) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Sand))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Sand;
+                            rerun = true;
+                        }
+
+                        //Get rid of horizontal water ridges
+                        if (checkTile(c, r, (int)BaseTiles.Water) && checkTile(c + 1, r, (int)BaseTiles.Sand) &&
+                            checkTile(c - 1, r, (int)BaseTiles.Sand))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Sand;
                             rerun = true;
                         }
 
@@ -189,9 +226,58 @@ namespace EmotionIsland
                             rerun = true;
                         }
 
+                        //Get rid of vertical sand ridges
+                        if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Grass) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Grass))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Grass;
+                            rerun = true;
+                        }
+
+                        //Get rid of horizontal sand ridges
+                        if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c + 1, r, (int)BaseTiles.Grass) &&
+                            checkTile(c - 1, r, (int)BaseTiles.Grass))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Grass;
+                            rerun = true;
+                        }
+
+                        //Normalize mountain edges vertically
+                        if (checkTile(c, r, (int)BaseTiles.Mountain) && checkTile(c, r - 1, (int)BaseTiles.Grass) &&
+                            checkTile(c, r + 1, (int)BaseTiles.Grass))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Grass;
+                            rerun = true;
+                        }
+
+                        //Normalize mountain edges horizontally
+                        if (checkTile(c, r, (int)BaseTiles.Mountain) && checkTile(c + 1, r, (int)BaseTiles.Grass) &&
+                            checkTile(c - 1, r, (int)BaseTiles.Grass))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Grass;
+                            rerun = true;
+                        }
+
+                        //Get rid of vertical grass ridges
+                        if (checkTile(c, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Mountain) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Mountain;
+                            rerun = true;
+                        }
+
+                        //Get rid of horizontal grass ridges
+                        if (checkTile(c, r, (int)BaseTiles.Grass) && checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
+                            checkTile(c - 1, r, (int)BaseTiles.Mountain))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Mountain;
+                            rerun = true;
+                        }
+
                     }
                 }
             }
+
 
             //Apply tilesets
             for (int r = 0; r < height; r++)
@@ -202,53 +288,145 @@ namespace EmotionIsland
 
                     if (checkTile(c, r, (int)BaseTiles.Sand))
                     {
-                        if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Water))
-                        {
-                            tiles[tile] = 90 + 10*rand.Next(0, 3);
-                        }else{
-                            tiles[tile] = 3 + rand.Next(0, 3);
-                        }
+                        if (checkTile(c - 1, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 134; //TOP BOTTOM LEFT
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 124; //TOP BOTTOM RIGHT
+                        else if (checkTile(c + 1, r + 1, (int)BaseTiles.Grass) && checkTile(c + 1, r, (int)BaseTiles.Sand)
+                            && checkTile(c, r + 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 6; //TOP LEFT
+                        else if (checkTile(c - 1, r - 1, (int)BaseTiles.Grass) && checkTile(c, r - 1, (int)BaseTiles.Sand)
+                            && checkTile(c - 1, r, (int)BaseTiles.Sand))
+                            tiles[tile] = 28; //BOTTOM RIGHT
+                        else if (checkTile(c - 1, r + 1, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Sand)
+                        && checkTile(c - 1, r, (int)BaseTiles.Sand))
+                            tiles[tile] = 8; //TOP RIGHT
+                        else if (checkTile(c, r - 1, (int)BaseTiles.Sand) && checkTile(c + 1, r, (int)BaseTiles.Sand)
+                            && checkTile(c + 1, r - 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 26; //BOTTOM LEFT
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Grass) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 144; //BOTTOM with Grass on right
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Grass) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 154; //BOTTOM with Grass on left
+                        else if (checkTile(c, r + 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 7; //TOP
+                        else if (checkTile(c, r - 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 10 + rand.Next(0, 3); //BOTTOM
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Grass))
+                            tiles[tile] = 16; //LEFT SIDE
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Grass))
+                            tiles[tile] = 18; //RIGHT SIDE
+                        else
+                            tiles[tile] = 3 + rand.Next(0, 3);//SAND
+                        
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Water))
                     {
-                        if (checkTile(c + 1, r, (int)BaseTiles.Sand) && checkTile(c + 1, r+1, (int)BaseTiles.Sand))
-                            tiles[tile] = 30;
-                        else if(checkTile(c, r+1, (int)BaseTiles.Sand))
-                            tiles[tile] = 80;
-                        else if (checkTile(c - 1, r, (int)BaseTiles.Sand) && checkTile(c - 1, r + 1, (int)BaseTiles.Sand))
-                            tiles[tile] = 60;
-                        else if (checkTile(c + 1, r, (int)BaseTiles.Sand) && checkTile(c + 1, r + 1, (int)BaseTiles.Water))
-                            tiles[tile] = 40;
+                        if (checkTile(c - 1, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 130; //TOP BOTTOM LEFT
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 120; //TOP BOTTOM RIGHT
                         else if (checkTile(c + 1, r + 1, (int)BaseTiles.Sand) && checkTile(c + 1, r, (int)BaseTiles.Water)
                             && checkTile(c, r + 1, (int)BaseTiles.Water))
-                            tiles[tile] = 20;
+                            tiles[tile] = 20; //TOP LEFT
                         else if (checkTile(c - 1, r - 1, (int)BaseTiles.Sand) && checkTile(c, r - 1, (int)BaseTiles.Water)
-                            && checkTile(c - 1, r, (int)BaseTiles.Sand))
-                            tiles[tile] = 70;
+                            && checkTile(c - 1, r, (int)BaseTiles.Water))
+                            tiles[tile] = 70; //BOTTOM RIGHT
                         else if (checkTile(c - 1, r + 1, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Water)
                         && checkTile(c - 1, r, (int)BaseTiles.Water))
-                            tiles[tile] = 50;
+                            tiles[tile] = 50; //TOP RIGHT
+                        else if(checkTile(c, r-1, (int)BaseTiles.Water) && checkTile(c+1, r, (int)BaseTiles.Water)
+                            && checkTile(c + 1, r-1, (int)BaseTiles.Sand))
+                            tiles[tile] = 40; //BOTTOM LEFT
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Sand) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 140; //BOTTOM with sand on right
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Sand) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 150; //BOTTOM with sand on left
+                        else if (checkTile(c, r + 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 80; //TOP
+                        else if (checkTile(c, r - 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 90 + 10*rand.Next(0, 3); //BOTTOM
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Sand))
+                            tiles[tile] = 30; //LEFT SIDE
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Sand))
+                            tiles[tile] = 60; //RIGHT SIDE
                         else
-                            tiles[tile] = 13;
+                            tiles[tile] = 13; //WATER
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
-                        if (checkTile(c, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Sand))
-                        {
-                            tiles[tile] = 10 + rand.Next(0, 3);
-                        }
+                        if (checkTile(c - 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 135; //TOP BOTTOM LEFT
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 125; //TOP BOTTOM RIGHT
+                        else if (checkTile(c + 1, r + 1, (int)BaseTiles.Mountain) && checkTile(c + 1, r, (int)BaseTiles.Grass)
+                            && checkTile(c, r + 1, (int)BaseTiles.Grass))
+                            tiles[tile] = 36; //TOP LEFT
+                        else if (checkTile(c - 1, r - 1, (int)BaseTiles.Mountain) && checkTile(c, r - 1, (int)BaseTiles.Grass)
+                            && checkTile(c - 1, r, (int)BaseTiles.Grass))
+                            tiles[tile] = 58; //BOTTOM RIGHT
+                        else if (checkTile(c - 1, r + 1, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Grass)
+                        && checkTile(c - 1, r, (int)BaseTiles.Grass))
+                            tiles[tile] = 38; //TOP RIGHT
+                        else if (checkTile(c, r - 1, (int)BaseTiles.Grass) && checkTile(c + 1, r, (int)BaseTiles.Grass)
+                            && checkTile(c + 1, r - 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 56; //BOTTOM LEFT
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 145; //BOTTOM with Mountain on right
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Mountain) &&
+                            checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 155; //BOTTOM with Mountain on left
+                        else if (checkTile(c, r + 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 37; //TOP
+                        else if (checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                            tiles[tile] = 57; //BOTTOM
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Mountain))
+                            tiles[tile] = 46; //LEFT SIDE
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Mountain))
+                            tiles[tile] = 48; //RIGHT SIDE
                         else
-                        {
-                            tiles[tile] = rand.Next(0, 3);
-                        }
+                            tiles[tile] = rand.Next(0, 3);//Grass
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Mountain))
                     {
-                        tiles[tile] = 0;
+                        tiles[tile] = 47;
                     }
                 }
             }
 
+        }
+
+        protected void recursiveGrowth(int x, int y, int type, int replaceType, int hops)
+        {
+            if (hops <= 0)
+                return;
+
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                return;
+
+            int tile = x + y * width;
+
+            if (!checkTile(x, y, replaceType) || (!checkTile(x + 1, y, replaceType) && !checkTile(x + 1, y, type)) ||
+                (!checkTile(x - 1, y, replaceType) && !checkTile(x - 1, y, type)) ||
+                (!checkTile(x, y + 1, replaceType) && !checkTile(x, y + 1, type)) ||
+                (!checkTile(x, y - 1, replaceType) && !checkTile(x, y - 1, type)) ||
+                (!checkTile(x - 1, y - 1, replaceType) && !checkTile(x - 1, y - 1, type)) ||
+                (!checkTile(x + 1, y - 1, replaceType) && !checkTile(x + 1, y - 1, type)) ||
+                (!checkTile(x - 1, y + 1, replaceType) && !checkTile(x - 1, y + 1, type)) ||
+                (!checkTile(x + 1, y + 1, replaceType) && !checkTile(x + 1, y + 1, type)))
+                return;
+
+            tempTiles[tile] = type;
+
+            recursiveGrowth(x + 1, y, type, replaceType, hops - rand.Next(1, 3));
+            recursiveGrowth(x - 1, y, type, replaceType, hops - rand.Next(1, 3));
+            recursiveGrowth(x, y + 1, type, replaceType, hops - rand.Next(1, 3));
+            recursiveGrowth(x, y - 1, type, replaceType, hops - rand.Next(1, 3));
         }
 
         protected bool checkTile(int x, int y, int type){
@@ -274,7 +452,7 @@ namespace EmotionIsland
                 m = 20;
 
             //River random seeds
-            int riverWidth = rand.Next(3, 12);
+            int riverWidth = rand.Next(6, 12);
             int curve = rand.Next(50, 250);
 
             bool done = false;
@@ -419,15 +597,19 @@ namespace EmotionIsland
             }
 
             if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W) && yPos > 0)
-                yPos -= 1;
+                yPos -= 10;
             else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
-                yPos += 1;
+                yPos += 10;
             else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) && xPos > 0)
-                xPos -= 1;
+                xPos -= 10;
             else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
-                xPos += 1;
+                xPos += 10;
 
-            bool drawTemp = false;
+
+
+            if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.E))
+                drawTemp = !drawTemp;
+            
             if (drawTemp)
             {
                 for (int r = 0; r < height; r++)
@@ -462,7 +644,7 @@ namespace EmotionIsland
                 {
                     for (int c = xPos; c < xPos + 40; c++)
                     {
-                        if (tiles[r * width + c] > 15)
+                        if (tiles[r * width + c] >= 20 && tiles[r * width + c]%10 == 0)
                         {
                             spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
                                 new Rectangle((tiles[r * width + c] % 10) * 32 + animationCounter*32, (tiles[r * width + c] / 10) * 32, 32, 32),
