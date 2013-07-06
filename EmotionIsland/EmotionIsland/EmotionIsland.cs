@@ -72,6 +72,10 @@ namespace EmotionIsland
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            if (Input.IsKeyDown(Keys.A))
+                world.GenerateWorld();
+
             Input.Update();
 
             this.world.Update();
@@ -85,11 +89,11 @@ namespace EmotionIsland
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
 
-            this.world.Draw(spriteBatch);
+            world.Draw(spriteBatch);
 
             spriteBatch.End();
 
