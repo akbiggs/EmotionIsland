@@ -73,7 +73,7 @@ namespace EmotionIsland
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (Input.IsKeyDown(Keys.A))
+            if (Input.KeyboardTapped(Keys.A))
                 world.GenerateWorld();
 
             Input.Update();

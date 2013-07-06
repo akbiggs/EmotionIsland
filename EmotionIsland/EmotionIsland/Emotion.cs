@@ -78,7 +78,6 @@ namespace EmotionIsland
 
         public void IncreaseAnger()
         {
-            Debug.WriteLine(this.angerLevel);
             this.angerLevel += EMOTION_INCREMENT;
             this.angerLevel = MathHelper.Clamp(this.angerLevel, -1, 1);
         }
