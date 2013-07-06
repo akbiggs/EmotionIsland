@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace EmotionIsland
@@ -13,8 +14,23 @@ namespace EmotionIsland
 
         public override void AngryUpdate()
         {
+            this.NextPosition = this.EmotionalTarget.Position;
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(10, 2))
+            {
+                this.Attack(this.EmotionalTarget);
+            }
 
             base.AngryUpdate();
+        }
+
+        private void Attack(GameObject target)
+        {
+            this.World.Add(new SlashAttack(this.World, this.Position, target.Position - this.Position));
+        }
+
+        public override void TerrifiedUpdate()
+        {
+            base.TerrifiedUpdate();
         }
     }
 }

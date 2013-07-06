@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BufferedList.cs" />
+    <Compile Include="Bullet.cs" />
     <Compile Include="Emotion.cs" />
     <Compile Include="EmotionalObject.cs" />
     <Compile Include="EmotionBeam.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="EmotionIsland.cs" />
+    <Compile Include="SlashAttack.cs" />
     <Compile Include="TextureBin.cs" />
     <Compile Include="Villager.cs" />
     <Compile Include="World.cs" />

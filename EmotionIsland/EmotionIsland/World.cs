@@ -13,6 +13,7 @@ namespace EmotionIsland
         private BufferedList<Player> players = new BufferedList<Player>();
         private BufferedList<Villager> villagers = new BufferedList<Villager>();
         private BufferedList<EmotionBeam> emotionBeams = new BufferedList<EmotionBeam>();
+        private BufferedList<Bullet> bullets = new BufferedList<Bullet>();
 
         private Random rand;
         public World()
@@ -108,12 +109,13 @@ namespace EmotionIsland
                     }
                 }
             }
-
+           
             this.villagers.Add(new Villager(this, new Vector2(40, 80), EmotionType.Angry));
             this.villagers.Add(new Villager(this, new Vector2(40, 120), EmotionType.Sad));
             this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
             this.villagers.Add(new Villager(this, new Vector2(40, 200), EmotionType.Terrified));
             this.villagers.Add(new Villager(this, new Vector2(40, 240), EmotionType.Neutral));
+            this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
 
         protected bool checkTile(int x, int y, int type){
@@ -169,6 +171,10 @@ namespace EmotionIsland
             {
                 this.villagers.BufferAdd((Villager)obj);
             }
+            else if (obj is Bullet)
+            {
+                this.bullets.BufferAdd((Bullet)obj);
+            }
         }
 
         public void Add(EmotionBeam beam)
@@ -185,6 +191,10 @@ namespace EmotionIsland
             else if (obj is Villager)
             {
                 this.villagers.BufferRemove((Villager)obj);
+            }
+            else if (obj is Bullet)
+            {
+                this.bullets.BufferRemove((Bullet)obj);
             }
         }
 
@@ -210,9 +220,15 @@ namespace EmotionIsland
                 emotionBeam.Update();
             }
 
+            foreach (var bullet in bullets)
+            {
+                bullet.Update();
+            }
+
             players.ApplyBuffers();
             villagers.ApplyBuffers();
             emotionBeams.ApplyBuffers();
+            bullets.ApplyBuffers();
         }
 
         public void Draw(SpriteBatch spr)
@@ -249,6 +265,11 @@ namespace EmotionIsland
             foreach (var emotionBeam in this.emotionBeams)
             {
                 emotionBeam.Draw(spr);
+            }
+
+            foreach (var bullet in bullets)
+            {
+                bullet.Draw(spr);
             }
         }
     }
