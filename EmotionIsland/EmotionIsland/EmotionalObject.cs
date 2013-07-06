@@ -104,7 +104,6 @@ namespace EmotionIsland
 
         public virtual void OnEmotionChanged(GameObject source)
         {
-            Debug.WriteLine("I changed!");
             this.EmotionalTarget = source;
         }
     }
