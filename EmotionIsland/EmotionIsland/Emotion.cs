@@ -1,7 +1,19 @@
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+
 namespace EmotionIsland
 {
     public class Emotion
     {
+        private static Dictionary<EmotionType, Color> colorMappings = new Dictionary<EmotionType, Color>
+            {
+                {EmotionType.Happy, Color.Yellow},
+                {EmotionType.Sad, Color.Blue},
+                {EmotionType.Angry, Color.Red},
+                {EmotionType.Terrified, Color.Green},
+                {EmotionType.Neutral, Color.Gray}
+            };
+
         private const float EMOTION_THRESHOLD = 0.5f;
 
         // range -1 to 1 depending on level of emotion
@@ -54,6 +66,11 @@ namespace EmotionIsland
             {
                 happyLevel = -1;
             }
+        }
+
+        public Color ToColor()
+        {
+            return colorMappings[this.EmotionType];
         }
     }
 

@@ -7,6 +7,9 @@ namespace EmotionIsland
         public Villager(World world, Vector2 pos, EmotionType emotion) 
             : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, 3, emotion)
         {
+            this.Color = this.Emotion.ToColor();
         }
+
+
     }
 }
