@@ -77,9 +77,15 @@
     <Compile Include="EmotionalObject.cs" />
     <Compile Include="EmotionBeam.cs" />
     <Compile Include="GameObject.cs" />
+    <Compile Include="Helpers\ColorHelper.cs" />
+    <Compile Include="Helpers\FloatHelper.cs" />
+    <Compile Include="Helpers\ListHelper.cs" />
+    <Compile Include="Helpers\TextureHelper.cs" />
+    <Compile Include="Helpers\VectorHelper.cs" />
     <Compile Include="IEmotionalAI.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="LivingObject.cs" />
+    <Compile Include="Particle.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

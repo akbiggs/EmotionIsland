@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Trauma.Helpers;
 
 namespace EmotionIsland
 {
@@ -9,18 +10,52 @@ namespace EmotionIsland
     {
         const int START_HEALTH = 3;
 
+        public EmotionBeam Beam { get; set; }
+
+        private EmotionType etype;
+        public Emotion Emotion { get; set; }
+
+        public EmotionType EmotionType { 
+            get { return etype; } 
+            set
+            {
+                etype = value; 
+                this.Emotion = new Emotion(etype); 
+            }
+        }
         public PlayerNumber PlayerNumber { get; private set; }
+
         private PlayerKeyBindings keyBindings;
 
         public Player(World world, Vector2 pos, PlayerNumber pn) : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, START_HEALTH)
         {
             this.PlayerNumber = pn;
             this.keyBindings = PlayerKeyBindings.FromPlayerNumber(pn);
+            switch (pn)
+            {
+                case PlayerNumber.One: this.EmotionType = EmotionType.Angry;
+                    break;
+                case PlayerNumber.Two: this.EmotionType = EmotionType.Happy;
+                    break;
+                case PlayerNumber.Three: this.EmotionType = EmotionType.Sad;
+                    break;
+                case PlayerNumber.Four: this.EmotionType = EmotionType.Terrified;
+                    break;
+                default:
+                    this.EmotionType = EmotionType.Neutral;
+                    break;
+            }
+            this.Emotion = new Emotion(this.EmotionType);
         }
 
         public override void Update()
         {
             base.Update();
+
+            if (this.Beam != null)
+            {
+                this.Beam.BasePosition = this.Position;
+            }
 
             this.HandleMovement();
 
@@ -28,10 +63,23 @@ namespace EmotionIsland
             {
                 this.FireWeaponAt(Input.MousePosition);
             }
+            else if (this.Beam != null)
+            {
+                World.Remove(this.Beam);
+                this.Beam = null;
+            }
         }
 
         private void FireWeaponAt(Vector2 targetPosition)
         {
+            if (this.Beam == null)
+            {
+                Vector2 direction = targetPosition - this.Position;
+                direction.Normalize();
+                EmotionBeam beam = new EmotionBeam(World, this.Position, direction, EmotionType);
+                this.Beam = beam;
+                World.Add(this.Beam);
+            }
         }
 
         private void HandleMovement()
