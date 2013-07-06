@@ -1,3 +1,4 @@
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,14 +26,13 @@ namespace EmotionIsland
 
         private BufferedList<Player> players = new BufferedList<Player>();
         private BufferedList<Villager> villagers = new BufferedList<Villager>();
+        private BufferedList<EmotionBeam> emotionBeams = new BufferedList<EmotionBeam>();
+        private BufferedList<Bullet> bullets = new BufferedList<Bullet>();
 
-        Random rand;
-
+        private Random rand;
         public World()
         {
             rand = new Random();
-            this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
-
             this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
 
             GenerateWorld();
@@ -111,7 +111,7 @@ namespace EmotionIsland
             int mountains = rand.Next(1, 5);
             for (int m = 0; m < mountains; m++)
             {
-
+                tempTiles[rand.Next(30, 100) + rand.Next(30, 100) * width] = (int)BaseTiles.Mountain;
             }
 
 
@@ -204,6 +204,10 @@ namespace EmotionIsland
                             tiles[tile] = rand.Next(0, 3);
                         }
                     }
+                    else if (checkTile(c, r, (int)BaseTiles.Mountain))
+                    {
+                        tiles[tile] = 0;
+                    }
                 }
             }
 
@@ -212,6 +216,7 @@ namespace EmotionIsland
             this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
             this.villagers.Add(new Villager(this, new Vector2(40, 200), EmotionType.Terrified));
             this.villagers.Add(new Villager(this, new Vector2(40, 240), EmotionType.Neutral));
+            this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
 
         protected bool checkTile(int x, int y, int type){
@@ -268,6 +273,15 @@ namespace EmotionIsland
             {
                 this.villagers.BufferAdd((Villager)obj);
             }
+            else if (obj is Bullet)
+            {
+                this.bullets.BufferAdd((Bullet)obj);
+            }
+        }
+
+        public void Add(EmotionBeam beam)
+        {
+            this.emotionBeams.BufferAdd(beam);
         }
 
         public void Remove(GameObject obj)
@@ -280,6 +294,15 @@ namespace EmotionIsland
             {
                 this.villagers.BufferRemove((Villager)obj);
             }
+            else if (obj is Bullet)
+            {
+                this.bullets.BufferRemove((Bullet)obj);
+            }
+        }
+
+        public void Remove(EmotionBeam beam)
+        {
+            this.emotionBeams.BufferRemove(beam);
         }
 
         public void Update()
@@ -291,15 +314,24 @@ namespace EmotionIsland
 
             foreach (var villager in villagers)
             {
-                villager.Anger(this.players[0]);
                 villager.Update();
+            }
+
+            foreach (var emotionBeam in this.emotionBeams)
+            {
+                emotionBeam.Update();
+            }
+
+            foreach (var bullet in bullets)
+            {
+                bullet.Update();
             }
 
             players.ApplyBuffers();
             villagers.ApplyBuffers();
+            emotionBeams.ApplyBuffers();
+            bullets.ApplyBuffers();
         }
-
-
 
         public void Draw(SpriteBatch spr)
         {
@@ -338,6 +370,10 @@ namespace EmotionIsland
                             {
                                 spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Yellow, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
                             }
+                            else if (tempTiles[r * width + c] == (int)BaseTiles.Mountain)
+                            {
+                                spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.DarkGray, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                            }
                         }
                     }
                 }
@@ -355,11 +391,25 @@ namespace EmotionIsland
                 }
             }
 
+            foreach (Player player in players)
+            {
+                player.Draw(spr);
+            }
+
             foreach (var villager in villagers)
             {
                 villager.Draw(spr);
             }
 
+            foreach (var emotionBeam in this.emotionBeams)
+            {
+                emotionBeam.Draw(spr);
+            }
+
+            foreach (var bullet in bullets)
+            {
+                bullet.Draw(spr);
+            }
         }
     }
 }

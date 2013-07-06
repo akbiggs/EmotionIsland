@@ -9,7 +9,17 @@ namespace EmotionIsland
 
         public virtual bool ShouldRemove { get { return false; } }
 
+        // TODO: Implement this. We need this for garbage collecting dead stuff.
+        public bool IsOffscreen { get { return false; } }
+
         public Vector2 Position { get; set; }
+
+        public Vector2 Center { get { return this.Position + this.Size/2; } }
+        public Vector2 Left { get { return this.Position + new Vector2(0, this.Size.Y/2); } }
+        public Vector2 Right { get { return this.Position + new Vector2(this.Size.X, this.Size.Y); } }
+        public Vector2 Top { get { return this.Position + new Vector2(this.Size.X/2, 0); } }
+        public Vector2 Bottom { get { return this.Position + new Vector2(this.Size.X/2, this.Size.Y); } }
+
         public Vector2 Velocity { get; set; }
 
         public Vector2 Size { get; set; }
