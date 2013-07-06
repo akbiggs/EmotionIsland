@@ -8,9 +8,17 @@ namespace EmotionIsland
         public World World { get; protected set; }
 
         public virtual bool ShouldRemove { get { return false; } }
+        public virtual bool IsAlive { get; set; }
 
         // TODO: Implement this. We need this for garbage collecting dead stuff.
         public bool IsOffscreen { get { return false; } }
+
+        public Rectangle BBox { 
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
+            }
+        }
 
         public Vector2 Position { get; set; }
 
@@ -34,6 +42,19 @@ namespace EmotionIsland
             this.Texture = texture;
 
             this.Color = Color.White;
+            this.IsAlive = true;
+        }
+
+        public virtual void HandleCollision(GameObject obj)
+        {
+            if (this.BBox.Intersects(obj.BBox))
+            {
+                this.OnCollide(obj);
+            }
+        }
+
+        public virtual void OnCollide(GameObject gameObject)
+        {
         }
 
         public virtual void Update()

@@ -14,8 +14,13 @@ namespace EmotionIsland
         private EmotionType etype;
         public Emotion Emotion { get; set; }
 
+        public override bool ShouldRemove
+        {
+            get { return this.Health <= 0; }
+        }
+
         public EmotionType EmotionType { 
-            get { return etype; } 
+            get { return etype; }
             set
             {
                 etype = value; 
@@ -101,6 +106,22 @@ namespace EmotionIsland
                 this.Position = new Vector2(this.Position.X + 5, this.Position.Y);
             }
         }
+
+        #region Collisions
+        public override void OnCollide(GameObject obj)
+        {
+            if (obj is SlashAttack)
+            {
+                this.SubTypeCollide((SlashAttack)obj);
+            }
+        }
+
+        private void SubTypeCollide(SlashAttack attack)
+        {
+            this.TakeDamage(1);
+        }
+
+        #endregion
     }
 
     internal class PlayerKeyBindings

@@ -19,6 +19,15 @@ namespace EmotionIsland
         public float MoveSpeed { get; set; }
 
         public GameObject EmotionalTarget { get; set; }
+        public Vector2 DirectionToTarget
+        {
+            get
+            {
+                Vector2 direction = EmotionalTarget.Position - this.Position;
+                direction.Normalize();
+                return direction;
+            }
+        }
 
         public EmotionalObject(World world, Vector2 pos, Vector2 size, Texture2D tex, int health, EmotionType emotionType) : base(world, pos, size, tex, health)
         {
