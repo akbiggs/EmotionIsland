@@ -24,8 +24,12 @@ namespace EmotionIsland
         int[] tiles;
         int[] tempTiles;
 
+        long animationTimer;
+        int animationCounter;
+
         private BufferedList<Player> players = new BufferedList<Player>();
         private BufferedList<Villager> villagers = new BufferedList<Villager>();
+
         private BufferedList<EmotionBeam> emotionBeams = new BufferedList<EmotionBeam>();
         private BufferedList<Bullet> bullets = new BufferedList<Bullet>();
 
@@ -118,7 +122,16 @@ namespace EmotionIsland
             int mountains = rand.Next(1, 5);
             for (int m = 0; m < mountains; m++)
             {
-                tempTiles[rand.Next(30, 100) + rand.Next(30, 100) * width] = (int)BaseTiles.Mountain;
+                Vector2 origin = new Vector2(0, 0);
+                while (tempTiles[(int)origin.X + (int)origin.Y * width] != (int)BaseTiles.Grass)
+                {
+                    origin.X = rand.Next(0, width);
+                    origin.Y = rand.Next(0, height);
+                }
+                tempTiles[(int)origin.X + (int)origin.Y * width] = (int)BaseTiles.Mountain;
+
+                tempTiles[(int)origin.X + (int)origin.Y * width + 1] = (int)BaseTiles.Mountain;
+                tempTiles[(int)origin.X + (int)origin.Y * width + 2] = (int)BaseTiles.Mountain;
             }
 
 
@@ -198,7 +211,25 @@ namespace EmotionIsland
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Water))
                     {
-                        tiles[tile] = 13;
+                        if (checkTile(c + 1, r, (int)BaseTiles.Sand) && checkTile(c + 1, r+1, (int)BaseTiles.Sand))
+                            tiles[tile] = 30;
+                        else if(checkTile(c, r+1, (int)BaseTiles.Sand))
+                            tiles[tile] = 80;
+                        else if (checkTile(c - 1, r, (int)BaseTiles.Sand) && checkTile(c - 1, r + 1, (int)BaseTiles.Sand))
+                            tiles[tile] = 60;
+                        else if (checkTile(c + 1, r, (int)BaseTiles.Sand) && checkTile(c + 1, r + 1, (int)BaseTiles.Water))
+                            tiles[tile] = 40;
+                        else if (checkTile(c + 1, r + 1, (int)BaseTiles.Sand) && checkTile(c + 1, r, (int)BaseTiles.Water)
+                            && checkTile(c, r + 1, (int)BaseTiles.Water))
+                            tiles[tile] = 20;
+                        else if (checkTile(c - 1, r - 1, (int)BaseTiles.Sand) && checkTile(c, r - 1, (int)BaseTiles.Water)
+                            && checkTile(c - 1, r, (int)BaseTiles.Sand))
+                            tiles[tile] = 70;
+                        else if (checkTile(c - 1, r + 1, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Water)
+                        && checkTile(c - 1, r, (int)BaseTiles.Water))
+                            tiles[tile] = 50;
+                        else
+                            tiles[tile] = 13;
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
@@ -317,6 +348,13 @@ namespace EmotionIsland
 
         public void Update()
         {
+            if(DateTime.Now.Ticks - animationTimer > 1151000){
+                animationTimer = DateTime.Now.Ticks;
+                animationCounter += 1;
+                if (animationCounter > 3)
+                    animationCounter = 0;
+            }
+
             foreach (Player player in this.players)
             {
                 player.Update();
@@ -434,9 +472,18 @@ namespace EmotionIsland
                 {
                     for (int c = xPos; c < xPos + 40; c++)
                     {
-                        spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
-                            new Rectangle((tiles[r * width + c] % 10) * 32, (tiles[r * width + c] / 10) * 32, 32, 32),
-                            Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                        if (tiles[r * width + c] > 15)
+                        {
+                            spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
+                                new Rectangle((tiles[r * width + c] % 10) * 32 + animationCounter*32, (tiles[r * width + c] / 10) * 32, 32, 32),
+                                Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                        }
+                        else
+                        {
+                            spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
+                                new Rectangle((tiles[r * width + c] % 10) * 32, (tiles[r * width + c] / 10) * 32, 32, 32),
+                                Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                        }
                     }
                 }
             }
