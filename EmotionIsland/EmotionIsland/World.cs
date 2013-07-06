@@ -7,9 +7,21 @@ namespace EmotionIsland
     public class World
     {
 
+        public enum BaseTiles
+        {
+            Grass = 0,
+            Water = 1,
+            Sand = 2,
+            Mountain = 3
+        }
+
+        int xPos;
+        int yPos;
+
         int width;
         int height;
         int[] tiles;
+        int[] tempTiles;
 
         private BufferedList<Player> players = new BufferedList<Player>();
         private BufferedList<Villager> villagers = new BufferedList<Villager>();
@@ -34,7 +46,8 @@ namespace EmotionIsland
             //Create tile array
             width = 500;
             height = 500;
-            tiles = new int[width*height];
+            tempTiles = new int[width*height];
+            tiles = new int[width * height];
 
             //Create rivers
             int rivers = rand.Next(2, 5);
@@ -69,44 +82,126 @@ namespace EmotionIsland
                         if (ridgeCounter >= ridgeLength)
                             createRidge = false;
                     }
-                    
+
                     if (
-                        r < (borderWidth + ridgeOffset/4 + waveDepth * Math.Sin(((float)c / (float)width * waveFrequency) * Math.PI))
+                        r < (borderWidth + ridgeOffset / 4 + waveDepth * Math.Sin(((float)c / (float)width * waveFrequency) * Math.PI))
                         || c < (borderWidth + ridgeOffset + waveDepth * Math.Sin(((float)r / (float)width * waveFrequency) * Math.PI))
                         || c > (width - (borderWidth + ridgeOffset + waveDepth * Math.Sin(((float)r / (float)width * waveFrequency) * Math.PI)))
                         || r > (height - (borderWidth + ridgeOffset + waveDepth * Math.Sin(((float)c / (float)width * waveFrequency) * Math.PI)))
-                    ){
-                        tiles[r * width + c] = 1;
+                    )
+                    {
+                        tempTiles[r * width + c] = (int)BaseTiles.Water;
 
-                            if (!createRidge)
+                        if (!createRidge)
+                        {
+                            createRidge = rand.Next(0, 100) == 0;
+                            if (createRidge)
                             {
-                                createRidge = rand.Next(0, 100) == 0;
-                                if (createRidge)
-                                {
-                                    ridgeDepth = rand.Next(10, 40);
-                                    ridgeCounter = 0;
-                                    ridgeLength = 160 * rand.Next(width / 3, width / 2);
-                                }
+                                ridgeDepth = rand.Next(10, 40);
+                                ridgeCounter = 0;
+                                ridgeLength = 160 * rand.Next(width / 3, width / 2);
                             }
+                        }
                     }
-
+                    
                 }
             }
 
+            //Create mountains
+            int mountains = rand.Next(1, 5);
+            for (int m = 0; m < mountains; m++)
+            {
+
+            }
+
+
             //Paint tiles.
+            bool rerun = true;
+            while (rerun)
+            {
+                rerun = false;
+                for (int r = 0; r < height; r++)
+                {
+                    for (int c = 0; c < width; c++)
+                    {
+                        //Create beach
+                        if (checkTile(c, r, (int)BaseTiles.Grass))
+                        {
+                            for (int d = 1; d < 5; d++)
+                            {
+                                if (checkTile(c + d, r, (int)BaseTiles.Water) || checkTile(c - d, r, (int)BaseTiles.Water) ||
+                                checkTile(c, r + d, (int)BaseTiles.Water) || checkTile(c, r - d, (int)BaseTiles.Water) ||
+                                checkTile(c + d, r + d, (int)BaseTiles.Water) || checkTile(c - d, r + d, (int)BaseTiles.Water) ||
+                                checkTile(c + d, r - d, (int)BaseTiles.Water) || checkTile(c - d, r - d, (int)BaseTiles.Water))
+                                    tempTiles[r * width + c] = (int)BaseTiles.Sand;
+                            }
+                        }
+
+                        //Normalize beach edges vertically
+                        if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c, r - 1, (int)BaseTiles.Water) &&
+                            checkTile(c, r + 1, (int)BaseTiles.Water))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Water;
+                            rerun = true;
+                        }
+
+                        //Normalize beach edges horizontally
+                        if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c - 1, r, (int)BaseTiles.Water) &&
+                            checkTile(c + 1, r, (int)BaseTiles.Water))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Water;
+                            rerun = true;
+                        }
+
+                        //Normalize grass edges vertically
+                        if (checkTile(c, r, (int)BaseTiles.Grass) && checkTile(c, r - 1, (int)BaseTiles.Sand) &&
+                            checkTile(c, r + 1, (int)BaseTiles.Sand))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Sand;
+                            rerun = true;
+                        }
+
+                        //Normalize grass edges horizontally
+                        if (checkTile(c, r, (int)BaseTiles.Grass) && checkTile(c + 1, r, (int)BaseTiles.Sand) &&
+                            checkTile(c - 1, r, (int)BaseTiles.Sand))
+                        {
+                            tempTiles[r * width + c] = (int)BaseTiles.Sand;
+                            rerun = true;
+                        }
+
+                    }
+                }
+            }
+
+            //Apply tilesets
             for (int r = 0; r < height; r++)
             {
                 for (int c = 0; c < width; c++)
                 {
-                    if (checkTile(c, r, 0))
+                    int tile = c + r*width;
+
+                    if (checkTile(c, r, (int)BaseTiles.Sand))
                     {
-                        for (int d = 1; d < 5; d++)
+                        if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Water))
                         {
-                            if (checkTile(c + d, r, 1) || checkTile(c - d, r, 1) ||
-                            checkTile(c, r + d, 1) || checkTile(c, r - d, 1) ||
-                            checkTile(c + d, r + d, 1) || checkTile(c - d, r + d, 1) ||
-                            checkTile(c + d, r - d, 1) || checkTile(c - d, r - d, 1))
-                                tiles[r * width + c] = 2;
+                            tiles[tile] = 13 + rand.Next(0, 3);
+                        }else{
+                            tiles[tile] = 3 + rand.Next(0, 3);
+                        }
+                    }
+                    else if (checkTile(c, r, (int)BaseTiles.Water))
+                    {
+                        tiles[tile] = 30 + rand.Next(0, 3);
+                    }
+                    else if (checkTile(c, r, (int)BaseTiles.Grass))
+                    {
+                        if (checkTile(c, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Sand))
+                        {
+                            tiles[tile] = 10 + rand.Next(0, 3);
+                        }
+                        else
+                        {
+                            tiles[tile] = rand.Next(0, 3);
                         }
                     }
                 }
@@ -123,7 +218,7 @@ namespace EmotionIsland
             if (x < 0 || x >= width || y < 0 || y >= height)
                 return false;
 
-            return tiles[x + y*width] == type;
+            return tempTiles[x + y*width] == type;
         }
 
         /// <summary>
@@ -142,7 +237,7 @@ namespace EmotionIsland
                 m = 20;
 
             //River random seeds
-            int riverWidth = rand.Next(5, 9);
+            int riverWidth = rand.Next(3, 12);
             int curve = rand.Next(50, 250);
 
             bool done = false;
@@ -155,7 +250,7 @@ namespace EmotionIsland
                 {
                     if (w + curveOffset + (int)origin.Y * width + x + width * (int)((m * x)) < width * height &&
                         w + curveOffset + (int)origin.Y * width + x + width * (int)((m * x)) > 0)
-                        tiles[(int)origin.Y*width + (int)x + width * (int)((m * x)) + w + curveOffset] = 1;
+                        tempTiles[(int)origin.Y * width + (int)x + width * (int)((m * x)) + w + curveOffset] = (int)BaseTiles.Water;
                     else
                         done = true;
                 }
@@ -204,6 +299,8 @@ namespace EmotionIsland
             villagers.ApplyBuffers();
         }
 
+
+
         public void Draw(SpriteBatch spr)
         {
             foreach (Player player in players)
@@ -211,22 +308,49 @@ namespace EmotionIsland
                 player.Draw(spr);
             }
 
+            if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W) && yPos > 0)
+                yPos -= 1;
+            else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
+                yPos += 1;
+            else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) && xPos > 0)
+                xPos -= 1;
+            else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
+                xPos += 1;
 
-            for (int r = 0; r < height; r++)
+            bool drawTemp = true;
+            if (drawTemp)
             {
-                for (int c = 0; c < width; c++)
+                for (int r = 0; r < height; r++)
                 {
-                    if (tiles[r * width + c] == 1)
+                    for (int c = 0; c < width; c++)
                     {
-                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Blue, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                        if (drawTemp)
+                        {
+                            if (tempTiles[r * width + c] == (int)BaseTiles.Water)
+                            {
+                                spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Blue, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                            }
+                            else if (tempTiles[r * width + c] == (int)BaseTiles.Grass)
+                            {
+                                spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Green, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                            }
+                            else if (tempTiles[r * width + c] == (int)BaseTiles.Sand)
+                            {
+                                spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Yellow, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                            }
+                        }
                     }
-                    else if (tiles[r * width + c] == 0)
+                }
+            }
+            else
+            {
+                for (int r = yPos; r < yPos + 35; r++)
+                {
+                    for (int c = xPos; c < xPos + 40; c++)
                     {
-                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Green, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
-                    }
-                    else if (tiles[r * width + c] == 2)
-                    {
-                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Yellow, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                        spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
+                            new Rectangle((tiles[r * width + c] % 10) * 32, (tiles[r * width + c] / 10) * 32, 32, 32),
+                            Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
                     }
                 }
             }

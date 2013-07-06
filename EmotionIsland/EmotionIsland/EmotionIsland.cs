@@ -23,6 +23,8 @@ namespace EmotionIsland
         public EmotionIsland()
         {
             graphics = new GraphicsDeviceManager(this);
+            this.graphics.PreferredBackBufferHeight = 720;
+            this.graphics.PreferredBackBufferWidth = 1280;
             Content.RootDirectory = "Content";
         }
 
@@ -73,7 +75,7 @@ namespace EmotionIsland
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (Input.KeyboardTapped(Keys.A))
+            if (Input.KeyboardTapped(Keys.Q))
                 world.GenerateWorld();
 
             Input.Update();
