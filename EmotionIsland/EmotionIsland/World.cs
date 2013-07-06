@@ -52,6 +52,7 @@ namespace EmotionIsland
 
             foreach (var villager in villagers)
             {
+                villager.Anger(this.players[0]);
                 villager.Update();
             }
 
