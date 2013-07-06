@@ -17,7 +17,7 @@ namespace EmotionIsland
             };
 
         private const float EMOTION_THRESHOLD = 0.5f;
-        private const float EMOTION_INCREMENT = 0.001f;
+        private const float EMOTION_INCREMENT = 0.008f;
 
         // range -1 to 1 depending on level of emotion
         private float happyLevel = 0;
