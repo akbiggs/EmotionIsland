@@ -15,7 +15,8 @@ namespace EmotionIsland
         public override void AngryUpdate()
         {
             this.NextPosition = this.EmotionalTarget.Position;
-            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(10, 2))
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(10, 2) &&
+                EmotionalTarget.IsAlive)
             {
                 this.Attack(this.EmotionalTarget);
             }
@@ -25,7 +26,7 @@ namespace EmotionIsland
 
         private void Attack(GameObject target)
         {
-            this.World.Add(new SlashAttack(this.World, this.Position, target.Position - this.Position));
+            this.World.Add(new SlashAttack(this.World, this.Position, this, target.Position - this.Position));
         }
 
         public override void TerrifiedUpdate()

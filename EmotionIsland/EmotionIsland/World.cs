@@ -184,14 +184,14 @@ namespace EmotionIsland
                     {
                         if (checkTile(c, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Water))
                         {
-                            tiles[tile] = 13 + rand.Next(0, 3);
+                            tiles[tile] = 90 + 10*rand.Next(0, 3);
                         }else{
                             tiles[tile] = 3 + rand.Next(0, 3);
                         }
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Water))
                     {
-                        tiles[tile] = 30 + rand.Next(0, 3);
+                        tiles[tile] = 13;
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
@@ -275,7 +275,11 @@ namespace EmotionIsland
             }
             else if (obj is Bullet)
             {
-                this.bullets.BufferAdd((Bullet)obj);
+                this.bullets.BufferAdd((Bullet) obj);
+            }
+            else
+            {
+                throw new InvalidOperationException("Don't have a handler for adding this type of object");
             }
         }
 
@@ -286,6 +290,7 @@ namespace EmotionIsland
 
         public void Remove(GameObject obj)
         {
+            obj.IsAlive = false;
             if (obj is Player)
             {
                 this.players.BufferRemove((Player)obj);
@@ -296,7 +301,11 @@ namespace EmotionIsland
             }
             else if (obj is Bullet)
             {
-                this.bullets.BufferRemove((Bullet)obj);
+                this.bullets.BufferRemove((Bullet) obj);
+            }
+            else
+            {
+                throw new InvalidOperationException("Don't have a handler for removing this type of object");
             }
         }
 
@@ -310,16 +319,31 @@ namespace EmotionIsland
             foreach (Player player in this.players)
             {
                 player.Update();
+                foreach (var bullet in bullets)
+                {
+                    player.HandleCollision(bullet);
+                }
             }
 
             foreach (var villager in villagers)
             {
                 villager.Update();
+                foreach (var bullet in bullets)
+                {
+                    villager.HandleCollision(bullet);
+                }
             }
 
             foreach (var emotionBeam in this.emotionBeams)
             {
                 emotionBeam.Update();
+                foreach (var villager in this.villagers)
+                {
+                    foreach (var particle in emotionBeam.Particles)
+                    {
+                        villager.HandleCollision(particle);
+                    }
+                }
             }
 
             foreach (var bullet in bullets)
@@ -335,9 +359,24 @@ namespace EmotionIsland
 
         public void Draw(SpriteBatch spr)
         {
-            foreach (Player player in players)
+            for (int r = 0; r < height; r++)
             {
-                player.Draw(spr);
+                for (int c = 0; c < width; c++)
+                {
+                    if (tiles[r * width + c] == 1)
+                    {
+                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Blue, 0, Vector2.Zero, 
+                            new Vector2(1, 1), SpriteEffects.None, 0);
+                    }
+                    else if (tiles[r * width + c] == 0)
+                    {
+                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Green, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                    }
+                    else if (tiles[r * width + c] == 2)
+                    {
+                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Yellow, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
+                    }
+                }
             }
 
             if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W) && yPos > 0)
@@ -349,7 +388,7 @@ namespace EmotionIsland
             else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
                 xPos += 1;
 
-            bool drawTemp = true;
+            bool drawTemp = false;
             if (drawTemp)
             {
                 for (int r = 0; r < height; r++)

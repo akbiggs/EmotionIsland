@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionIsland", "EmotionIsland\EmotionIsland\EmotionIsland.csproj", "{C5041E86-6348-4762-A77E-5FBD72828A84}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "EmotionIslandContent", "EmotionIsland\EmotionIslandContent\EmotionIslandContent.contentproj", "{F5796303-F358-4A15-91CE-3B2B7D9B0BFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmotionIslandContent", "EmotionIsland\EmotionIslandContent\EmotionIslandContent.contentproj", "{F5796303-F358-4A15-91CE-3B2B7D9B0BFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
