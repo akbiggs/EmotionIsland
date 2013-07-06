@@ -32,7 +32,6 @@ namespace EmotionIsland
 
         private void FireWeaponAt(Vector2 targetPosition)
         {
-            
         }
 
         private void HandleMovement()

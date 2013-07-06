@@ -6,13 +6,15 @@ namespace EmotionIsland
 {
     public class World
     {
-        BufferedList<Player> players = new BufferedList<Player>();
 
         Texture2D tempTexture;
 
         int width;
         int height;
         int[] tiles;
+
+        private BufferedList<Player> players = new BufferedList<Player>();
+        private BufferedList<Villager> villagers = new BufferedList<Villager>();
 
         public World()
         {
@@ -75,13 +77,23 @@ namespace EmotionIsland
 
                 }
             }
+
+            this.villagers.Add(new Villager(this, new Vector2(40, 80), EmotionType.Angry));
+            this.villagers.Add(new Villager(this, new Vector2(40, 120), EmotionType.Sad));
+            this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
+            this.villagers.Add(new Villager(this, new Vector2(40, 200), EmotionType.Terrified));
+            this.villagers.Add(new Villager(this, new Vector2(40, 240), EmotionType.Neutral));
         }
 
         public void Add(GameObject obj)
         {
             if (obj is Player)
             {
-                this.players.BufferAdd((Player)obj); 
+                this.players.BufferAdd((Player)obj);
+            }
+            else if (obj is Villager)
+            {
+                this.villagers.BufferAdd((Villager)obj);
             }
         }
 
@@ -89,7 +101,11 @@ namespace EmotionIsland
         {
             if (obj is Player)
             {
-                this.players.BufferRemove((Player)obj); 
+                this.players.BufferRemove((Player)obj);
+            }
+            else if (obj is Villager)
+            {
+                this.villagers.BufferRemove((Villager)obj);
             }
         }
 
@@ -99,6 +115,14 @@ namespace EmotionIsland
             {
                 player.Update();
             }
+
+            foreach (var villager in villagers)
+            {
+                villager.Update();
+            }
+
+            players.ApplyBuffers();
+            villagers.ApplyBuffers();
         }
 
         public void Draw(SpriteBatch spr)
@@ -107,6 +131,7 @@ namespace EmotionIsland
             {
                 player.Draw(spr);
             }
+
             for (int r = 0; r < height; r++)
             {
                 for (int c = 0; c < width; c++)
@@ -117,6 +142,12 @@ namespace EmotionIsland
                     }
                 }
             }
+
+            foreach (var villager in villagers)
+            {
+                villager.Draw(spr);
+            }
+
         }
     }
 }
