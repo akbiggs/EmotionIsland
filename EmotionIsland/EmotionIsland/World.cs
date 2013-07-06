@@ -26,21 +26,17 @@ namespace EmotionIsland
             GenerateWorld();
         }
 
+        /// <summary>
+        /// Generate a random world.
+        /// </summary>
         public void GenerateWorld()
         {
+            //Create tile array
             width = 500;
             height = 500;
             tiles = new int[width*height];
 
-            int borderWidth = rand.Next(3, 7);
-            int waveFrequency = rand.Next(3, 40);
-            int waveDepth = rand.Next(3, borderWidth);
-
-            bool createRidge = false;
-            int ridgeDepth = 0;
-            int ridgeLength = 0;
-            int ridgeCounter = 0;
-
+            //Create rivers
             int rivers = rand.Next(2, 5);
             for (int i = 0; i < rivers; i++)
             {
@@ -49,22 +45,31 @@ namespace EmotionIsland
                 createRiver(origin, destination);
             }
 
+            int borderWidth = rand.Next(3, 7);
+            int waveFrequency = rand.Next(3, 40);
+            int waveDepth = rand.Next(3, borderWidth);
+
+            //Create island by sorrounding map with water.
+            bool createRidge = false;
+            int ridgeDepth = 0;
+            int ridgeLength = 0;
+            int ridgeCounter = 0;
+
             //Generate island layout.
             for (int r = 0; r < height; r++)
             {
                 for (int c = 0; c < width; c++)
                 {
                     int ridgeOffset = 0;
-                        if (createRidge)
-                        {
-                            ridgeOffset = Math.Abs((int)(ridgeDepth * Math.Sin((float)((float)ridgeCounter / (float)ridgeLength) * Math.PI)));
+                    if (createRidge)
+                    {
+                        ridgeOffset = Math.Abs((int)(ridgeDepth * Math.Sin((float)((float)ridgeCounter / (float)ridgeLength) * Math.PI)));
 
-                            ridgeCounter++;
-                            if (ridgeCounter >= ridgeLength)
-                                createRidge = false;
-                        }
+                        ridgeCounter++;
+                        if (ridgeCounter >= ridgeLength)
+                            createRidge = false;
+                    }
                     
-
                     if (
                         r < (borderWidth + ridgeOffset/4 + waveDepth * Math.Sin(((float)c / (float)width * waveFrequency) * Math.PI))
                         || c < (borderWidth + ridgeOffset + waveDepth * Math.Sin(((float)r / (float)width * waveFrequency) * Math.PI))
@@ -88,7 +93,7 @@ namespace EmotionIsland
                 }
             }
 
-            //Draw ground sprites
+            //Paint tiles.
             for (int r = 0; r < height; r++)
             {
                 for (int c = 0; c < width; c++)
@@ -103,8 +108,6 @@ namespace EmotionIsland
                             checkTile(c + d, r - d, 1) || checkTile(c - d, r - d, 1))
                                 tiles[r * width + c] = 2;
                         }
-                        
-                            
                     }
                 }
             }
@@ -123,35 +126,36 @@ namespace EmotionIsland
             return tiles[x + y*width] == type;
         }
 
+        /// <summary>
+        /// Generate a river
+        /// </summary>
+        /// <param name="origin">The origin.</param>
+        /// <param name="destination">The destination.</param>
         protected void createRiver(Vector2 origin, Vector2 destination)
         {
+            //Calculate and limit the slope
             float m = ((origin.Y - destination.Y)/ (origin.X - destination.X));
-
             if (Math.Abs(m) < 2)
-            {
                 m = 2;
-            }
+
             if (Math.Abs(m) > 20)
                 m = 20;
 
+            //River random seeds
             int riverWidth = rand.Next(5, 9);
             int curve = rand.Next(50, 250);
 
             bool done = false;
-            for (float x = 0; x < width; x += 0.05f)
+            for (float x = 0; x < width && !done; x += 0.05f)
             {
-                if(done)
-                    break;
-
                 int curveOffset = (int)((float)curve * Math.Sin(x / 44f));
 
+                //Draw river
                 for (int w = 0; w < riverWidth; w++)
                 {
-                    if (w + curveOffset + (int)origin.Y + x + width * (int)((m * x)) < width * height &&
-                        w + curveOffset + (int)origin.Y + x + width * (int)((m * x)) > 0)
-                    {
-                        tiles[(int)origin.Y + (int)x + width * (int)((m * x)) + w + curveOffset] = 1;
-                    }
+                    if (w + curveOffset + (int)origin.Y * width + x + width * (int)((m * x)) < width * height &&
+                        w + curveOffset + (int)origin.Y * width + x + width * (int)((m * x)) > 0)
+                        tiles[(int)origin.Y*width + (int)x + width * (int)((m * x)) + w + curveOffset] = 1;
                     else
                         done = true;
                 }
