@@ -5,7 +5,8 @@ namespace EmotionIsland
 {
     public class World
     {
-        BufferedList<Player> players = new BufferedList<Player>(); 
+        private BufferedList<Player> players = new BufferedList<Player>();
+        private BufferedList<Villager> villagers = new BufferedList<Villager>();
 
         public World()
         {

@@ -7,6 +7,8 @@ namespace EmotionIsland
     {
         public World World { get; protected set; }
 
+        public virtual bool ShouldRemove { get { return false; } }
+
         public Vector2 Position { get; set; }
         public Vector2 Velocity { get; set; }
 
@@ -24,15 +26,16 @@ namespace EmotionIsland
             this.Color = Color.White;
         }
 
-        public GameObject(World world, Vector2 position, Vector2 initialVelocity, Vector2 size, Texture2D texture)
-            : this(world, position, size, texture)
-        {
-            this.Velocity = initialVelocity;
-        }
-
         public virtual void Update()
         {
-            this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y + this.Velocity.Y);
+            if (this.ShouldRemove)
+            {
+                this.World.Remove(this);
+            }
+            else
+            {
+                this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y + this.Velocity.Y);
+            }
         }
 
         public virtual void Draw(SpriteBatch spr)
