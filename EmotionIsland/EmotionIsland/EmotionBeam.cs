@@ -14,10 +14,13 @@ namespace EmotionIsland
         public Vector2 Direction { get; set; }
         public Color Color { get; set; }
 
+        public Player Owner { get; set; }
+
         public int Timer { get; set; }
 
-        public EmotionBeam(World world, Vector2 pos, Vector2 direction, EmotionType emotionType)
+        public EmotionBeam(World world, Vector2 pos, Vector2 direction, EmotionType emotionType, Player owner)
         {
+            this.Owner = owner;
             this.World = world;
             this.BasePosition = pos;
             this.Emotion = new Emotion(emotionType);
@@ -45,7 +48,8 @@ namespace EmotionIsland
 
         private void SpawnParticle()
         {
-            BeamParticle particle = new BeamParticle(this.World, this.BasePosition, this.Direction);
+            BeamParticle particle = new BeamParticle(this.World, this, this.Emotion.EmotionType, this.BasePosition,
+                                                     this.Direction);
             particle.Color = this.Color;
             this.Particles.Add(particle);
         }
@@ -56,14 +60,6 @@ namespace EmotionIsland
             {
                 particle.Draw(spr);
             }
-        }
-    }
-
-    public class BeamParticle : Particle 
-    {
-        public BeamParticle(World world, Vector2 position, Vector2 direction) 
-            : base(world, position, new Vector2(16, 16), TextureBin.Pixel, direction * 5, -1)
-        {
         }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,7 +9,18 @@ namespace EmotionIsland
     {
         public World World { get; protected set; }
 
-        public virtual bool ShouldRemove { get { return false; } }
+        public FacingDirection FacingDirection {
+            get { return lastMovement.X < 0 ? FacingDirection.Left : FacingDirection.Right; }
+        }
+        
+        Vector2 lastMovement = new Vector2();
+
+        public int FrameDuration { get; set; }
+
+        public List<AnimationSet> Animations = new List<AnimationSet>();
+        private AnimationSet curAnimation;
+
+        public virtual bool ShouldRemove { get { return !this.IsAlive; } }
         public virtual bool IsAlive { get; set; }
 
         // TODO: Implement this. We need this for garbage collecting dead stuff.
@@ -43,6 +56,8 @@ namespace EmotionIsland
 
             this.Color = Color.White;
             this.IsAlive = true;
+
+            this.FrameDuration = 4;
         }
 
         public virtual void HandleCollision(GameObject obj)
@@ -65,13 +80,53 @@ namespace EmotionIsland
             }
             else
             {
+                if (this.curAnimation != null)
+                {
+                    this.curAnimation.Update();
+                }
+
+                if (this.Velocity.X != 0)
+                {
+                    this.lastMovement = this.Velocity;
+                }
+
                 this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y + this.Velocity.Y);
             }
         }
 
         public virtual void Draw(SpriteBatch spr)
         {
-            spr.Draw(this.Texture, this.Position, null, this.Color, 0, Vector2.Zero, this.Size, SpriteEffects.None, 0);
+            Texture2D tex = this.curAnimation != null ? this.curAnimation.GetTexture() : this.Texture;
+            Rectangle? sourceRectangle = this.curAnimation != null ? this.curAnimation.GetFrameRect() : (Rectangle?) null;
+
+            spr.Draw(tex, this.Position, sourceRectangle, this.Color, 0, Vector2.Zero, 
+                this.curAnimation == null ? this.Size : Vector2.One,
+                FacingDirection == FacingDirection.Right ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 
+                0);
+        }
+
+        /// <summary>
+        ///     Changes the animation being played. Doesn't do anything if called with the name of the currently
+        ///     playing animation.
+        /// </summary>
+        /// <param name="name">The name of the new animation.</param>
+        /// <exception cref="System.InvalidOperationException">Specified animation doesn't exist.</exception>
+        protected virtual void ChangeAnimation(string name)
+        {
+            if (curAnimation == null || !curAnimation.IsCalled(name))
+            {
+                AnimationSet newAnimation = GetAnimationByName(name);
+                if (newAnimation == null)
+                    throw new InvalidOperationException("Specified animation doesn't exist.");
+                newAnimation.Reset();
+                newAnimation.Update();
+                curAnimation = newAnimation;
+            }
+        }
+
+        private AnimationSet GetAnimationByName(string name)
+        {
+            return Animations.Find(animset => animset.IsCalled(name));
         }
     }
 }

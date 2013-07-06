@@ -9,6 +9,7 @@ namespace EmotionIsland
 
         void UpdateAI(EmotionType emotion);
 
+        void InfectWithEmotion(EmotionType emotion, GameObject source);
         void Anger(GameObject source);
         void Terrify(GameObject source);
         void Excite(GameObject source);

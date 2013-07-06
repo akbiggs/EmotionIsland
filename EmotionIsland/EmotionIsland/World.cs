@@ -326,6 +326,11 @@ namespace EmotionIsland
                 }
             }
 
+            if (this.PartyWiped())
+            {
+                villagers.ForEach(villager => {villager.Emotion = new Emotion(EmotionType.Neutral); villager.OnEmotionChanged(null);});
+            }
+
             foreach (var villager in villagers)
             {
                 villager.Update();
@@ -356,6 +361,11 @@ namespace EmotionIsland
             villagers.ApplyBuffers();
             emotionBeams.ApplyBuffers();
             bullets.ApplyBuffers();
+        }
+
+        private bool PartyWiped()
+        {
+            return this.players.FindAll((player) => player.IsAlive).Count == 0;
         }
 
         public void Draw(SpriteBatch spr)

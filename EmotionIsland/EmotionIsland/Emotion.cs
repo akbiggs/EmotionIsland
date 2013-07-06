@@ -69,6 +69,11 @@ namespace EmotionIsland
             {
                 happyLevel = -1;
             }
+            else
+            {
+                this.happyLevel = 0;
+                this.angerLevel = 0;
+            }
         }
 
         public Color ToColor()

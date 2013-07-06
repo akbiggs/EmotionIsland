@@ -8,8 +8,13 @@ namespace EmotionIsland
 {
     public class EmotionalObject : LivingObject, IEmotionalAI
     {
-        public Emotion Emotion { get; private set; }
+        private int stunTimer;
+        public bool IsStunned { get { return stunTimer > 0; } }
+
+        public Emotion Emotion { get; set; }
         public EmotionType EmotionType { get { return this.Emotion.EmotionType; } }
+
+        public override Color Color { get { return this.Emotion.ToColor(); } set {}}
 
         public bool HasTargetPosition
         {
@@ -52,7 +57,7 @@ namespace EmotionIsland
         
         public virtual void UpdateAI(EmotionType emotion)
         {
-            if (this.HasEmotionTarget) {
+            if (this.HasEmotionTarget && !this.IsStunned) {
                 if (emotion == EmotionType.Angry)
                 {
                     this.AngryUpdate();
@@ -84,46 +89,61 @@ namespace EmotionIsland
                     }
                 }
             }
+            else if (this.IsStunned)
+            {
+                this.stunTimer--;
+            }
+        }
+
+        public virtual void InfectWithEmotion(EmotionType type, GameObject source)
+        {
+            EmotionType old = this.EmotionType;
+            this.Stun();
+
+            if (type == EmotionType.Angry)
+            {
+                this.Anger(source);
+            }
+
+            else if (type == EmotionType.Happy)
+            {
+                this.Excite(source);
+            }
+
+            else if (type == EmotionType.Sad)
+            {
+                this.Depress(source);
+            }
+
+            else if (type == EmotionType.Terrified)
+            {
+                this.Terrify(source);
+            }
+
+            if (old != this.EmotionType)
+            {
+                this.OnEmotionChanged(source);
+            }
         }
 
         public virtual void Anger(GameObject source)
         {
-            EmotionType old = this.EmotionType;
             this.Emotion.IncreaseAnger();
-            if (old != this.EmotionType)
-            {
-                this.OnEmotionChanged(source);
-            }
         }
 
         public virtual void Terrify(GameObject source)
         {
-            EmotionType old = this.EmotionType;
             this.Emotion.IncreaseTerror();
-            if (old != this.EmotionType)
-            {
-                this.OnEmotionChanged(source);
-            }
         }
 
         public virtual void Excite(GameObject source)
         {
-            EmotionType old = this.EmotionType;
             this.Emotion.IncreaseHappiness();
-            if (old != this.EmotionType)
-            {
-                this.OnEmotionChanged(source);
-            }
         }
 
         public virtual void Depress(GameObject source)
         {
-            EmotionType old = this.EmotionType;
             this.Emotion.IncreaseSadness();
-            if (old != this.EmotionType)
-            {
-                this.OnEmotionChanged(source);
-            }
         }
 
 
@@ -150,6 +170,11 @@ namespace EmotionIsland
         public virtual void OnEmotionChanged(GameObject source)
         {
             this.EmotionalTarget = source;
+        }
+
+        public virtual void Stun()
+        {
+            this.stunTimer = 100;
         }
     }
 }

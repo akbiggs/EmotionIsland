@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
@@ -9,6 +10,8 @@ namespace EmotionIsland
     public class Player : LivingObject
     {
         const int START_HEALTH = 3;
+
+        private string lastDirection;
 
         public EmotionBeam Beam { get; set; }
 
@@ -34,6 +37,7 @@ namespace EmotionIsland
 
         public Player(World world, Vector2 pos, PlayerNumber pn) : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, START_HEALTH)
         {
+            
             this.PlayerNumber = pn;
             this.keyBindings = PlayerKeyBindings.FromPlayerNumber(pn);
             switch (pn)
@@ -51,6 +55,25 @@ namespace EmotionIsland
                     break;
             }
             this.Emotion = new Emotion(this.EmotionType);
+            string spritesheetName = "characterSheetWalk_0" + (int) (this.PlayerNumber);
+
+            this.Animations = new List<AnimationSet>
+                {
+                    new AnimationSet("idle_upperdiag", TextureBin.Get(spritesheetName), 1, 32, 32, this.FrameDuration, 7, true, 0),
+                    new AnimationSet("idle_lowerdiag", TextureBin.Get(spritesheetName), 1, 32, 32, FrameDuration, 7, true, 7),
+                    new AnimationSet("idle_upper", TextureBin.Get(spritesheetName), 1, 32, 32, FrameDuration, 7, true, 7*2),
+                    new AnimationSet("idle_lower", TextureBin.Get(spritesheetName), 1, 32, 32, FrameDuration, 7, true, 7*3),
+                    new AnimationSet("idle_side", TextureBin.Get(spritesheetName), 1, 32, 32, FrameDuration, 7, true, 7*4),
+
+                    new AnimationSet("walk_upperdiag", TextureBin.Get(spritesheetName), 6, 32, 32, this.FrameDuration, 7, true, 1),
+                    new AnimationSet("walk_lowerdiag", TextureBin.Get(spritesheetName), 6, 32, 32, FrameDuration, 7, true, 7+1),
+                    new AnimationSet("walk_upper", TextureBin.Get(spritesheetName), 6, 32, 32, FrameDuration, 7, true, 7*2+1),
+                    new AnimationSet("walk_lower", TextureBin.Get(spritesheetName), 6, 32, 32, FrameDuration, 7, true, 7*3+1),
+                    new AnimationSet("walk_side", TextureBin.Get(spritesheetName), 6, 32, 32, FrameDuration, 7, true, 7*4+1),
+                };
+
+            lastDirection = "upper";
+            this.ChangeAnimation("walk_upper");
         }
 
         public override void Update()
@@ -81,7 +104,7 @@ namespace EmotionIsland
             direction.Normalize();
             if (this.Beam == null)
             {
-                EmotionBeam beam = new EmotionBeam(World, this.Position, direction, EmotionType);
+                EmotionBeam beam = new EmotionBeam(World, this.Position, direction, EmotionType, this);
                 this.Beam = beam;
                 World.Add(this.Beam);
             }
@@ -93,22 +116,60 @@ namespace EmotionIsland
 
         private void HandleMovement()
         {
+            this.Velocity = Vector2.Zero;
+
+            const int moveSpeed = 3;
             if (Input.IsKeyDown(this.keyBindings.Up))
             {
-                this.Position = new Vector2(this.Position.X, this.Position.Y - 5);
+                this.Velocity = new Vector2(this.Velocity.X, -moveSpeed);
             }
             else if (Input.IsKeyDown(this.keyBindings.Down))
             {
-                this.Position = new Vector2(this.Position.X, this.Position.Y + 5);
+                this.Velocity = new Vector2(this.Velocity.X, moveSpeed);
             }
 
             if (Input.IsKeyDown(this.keyBindings.Left))
             {
-                this.Position = new Vector2(this.Position.X - 5, this.Position.Y);
+                this.Velocity = new Vector2(-moveSpeed, this.Velocity.Y);
             }
             else if (Input.IsKeyDown(this.keyBindings.Right))
             {
-                this.Position = new Vector2(this.Position.X + 5, this.Position.Y);
+                this.Velocity = new Vector2(moveSpeed, this.Velocity.Y);
+            }
+
+            this.UpdateAnimation();
+        }
+
+        private void UpdateAnimation()
+        {
+            if (Velocity == Vector2.Zero)
+            {
+                this.ChangeAnimation("idle_" + lastDirection);
+            } 
+            else 
+            {
+                if (Velocity.Y < 0 && Math.Abs(Velocity.X) > 0)
+                {
+                    this.lastDirection = "upperdiag";
+                }
+                else if (Velocity.Y > 0 && Math.Abs(Velocity.X) > 0)
+                {
+                    this.lastDirection = "lowerdiag";
+                }
+                else if (Math.Abs(Velocity.X) > 0)
+                {
+                    this.lastDirection = "side";
+                }
+                else if (Velocity.Y < 0)
+                {
+                    this.lastDirection = "upper";
+                }
+                else
+                {
+                    this.lastDirection = "lower";
+                }
+
+                this.ChangeAnimation("walk_" + this.lastDirection);
             }
         }
 
@@ -163,6 +224,6 @@ namespace EmotionIsland
 
     public enum PlayerNumber
     {
-        One, Two, Three, Four
+        One=1, Two=2, Three=3, Four=4
     }
 }

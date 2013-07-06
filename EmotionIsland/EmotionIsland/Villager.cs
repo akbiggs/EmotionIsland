@@ -28,6 +28,8 @@ namespace EmotionIsland
         {
         }
 
+        #region AI
+
         public override void HappyUpdate()
         {
             this.NextPosition = this.EmotionalTarget.Position;
@@ -128,5 +130,18 @@ namespace EmotionIsland
                 }
             }
         }
+        #endregion
+
+        public override void OnCollide(GameObject gameObject)
+        {
+            if (gameObject is BeamParticle)
+            {
+                BeamParticle particle = (BeamParticle) gameObject;
+                this.InfectWithEmotion(particle.EmotionType, particle.OwnerBeam.Owner);
+            }
+            base.OnCollide(gameObject);
+        }
+
+
     }
 }

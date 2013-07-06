@@ -7,6 +7,7 @@ namespace EmotionIsland
     {
         private int invulnerableTimer = 0;
         private int healTimer = 0;
+        
 
         public bool ShouldHeal
         {

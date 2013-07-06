@@ -72,11 +72,15 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationSet.cs" />
+    <Compile Include="BeamParticle.cs" />
     <Compile Include="BufferedList.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Emotion.cs" />
     <Compile Include="EmotionalObject.cs" />
     <Compile Include="EmotionBeam.cs" />
+    <Compile Include="EntitySpriteSet.cs" />
+    <Compile Include="FacingDirection.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Helpers\ColorHelper.cs" />
     <Compile Include="Helpers\FloatHelper.cs" />
