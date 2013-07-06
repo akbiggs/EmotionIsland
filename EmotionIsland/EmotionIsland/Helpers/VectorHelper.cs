@@ -47,16 +47,19 @@ namespace EmotionIsland.Helpers
         public static Vector2 PushTowards(this Vector2 vector, Vector2 towards, Vector2 push)
         {
             Vector2 result = vector;
-            
+            Vector2 direction = towards - vector;
+            direction.Normalize();
+            direction = new Vector2(Math.Abs(direction.X), Math.Abs(direction.Y));
+
             if (vector.X < towards.X)
-                result.X = Math.Min(vector.X + push.X, towards.X);
+                result.X = Math.Min(vector.X + push.X*direction.X, towards.X);
             else
-                result.X = Math.Max(vector.X - push.X, towards.X);
+                result.X = Math.Max(vector.X - push.X*direction.X, towards.X);
 
             if (vector.Y < towards.Y)
-                result.Y = Math.Min(vector.Y + push.Y, towards.Y);
+                result.Y = Math.Min(vector.Y + push.Y*direction.Y, towards.Y);
             else
-                result.Y = Math.Max(vector.Y - push.Y, towards.Y);
+                result.Y = Math.Max(vector.Y - push.Y*direction.Y, towards.Y);
 
             return result;
         }

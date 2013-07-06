@@ -36,6 +36,13 @@ namespace EmotionIsland
             this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
 
             GenerateWorld();
+
+            this.villagers.Add(new Villager(this, new Vector2(40, 80), EmotionType.Angry));
+            this.villagers.Add(new Villager(this, new Vector2(40, 120), EmotionType.Sad));
+            this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
+            this.villagers.Add(new Villager(this, new Vector2(200, 200), EmotionType.Terrified));
+            this.villagers.Add(new Villager(this, new Vector2(40, 240), EmotionType.Neutral));
+            this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
 
         /// <summary>
@@ -211,12 +218,6 @@ namespace EmotionIsland
                 }
             }
 
-            this.villagers.Add(new Villager(this, new Vector2(40, 80), EmotionType.Angry));
-            this.villagers.Add(new Villager(this, new Vector2(40, 120), EmotionType.Sad));
-            this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
-            this.villagers.Add(new Villager(this, new Vector2(40, 200), EmotionType.Terrified));
-            this.villagers.Add(new Villager(this, new Vector2(40, 240), EmotionType.Neutral));
-            this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
 
         protected bool checkTile(int x, int y, int type){

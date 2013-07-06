@@ -11,10 +11,16 @@ namespace EmotionIsland
         public Emotion Emotion { get; private set; }
         public EmotionType EmotionType { get { return this.Emotion.EmotionType; } }
 
-        public bool HasTarget
+        public bool HasTargetPosition
         {
             get { return this.NextPosition != Vector2.Zero && this.NextPosition != this.Position; }
         }
+
+        public bool HasEmotionTarget
+        {
+            get { return this.EmotionalTarget != null && this.EmotionalTarget.IsAlive; }
+        }
+
         public Vector2 NextPosition { get; set; }
         public float MoveSpeed { get; set; }
 
@@ -46,34 +52,36 @@ namespace EmotionIsland
         
         public virtual void UpdateAI(EmotionType emotion)
         {
-            if (emotion == EmotionType.Angry)
-            {
-                this.AngryUpdate();
-            }
-            else if (emotion == EmotionType.Happy)
-            {
-                this.HappyUpdate();
-            }
-            else if (emotion == EmotionType.Sad)
-            {
-                this.SadUpdate();
-            }
-            else if (emotion == EmotionType.Terrified)
-            {
-                this.TerrifiedUpdate();
-            }
-            else
-            {
-                this.NeutralUpdate();
-            }
-
-            if (this.HasTarget)
-            {
-                this.Position = this.Position.PushTowards(this.NextPosition, this.MoveSpeed*Vector2.One);
-                if (this.NextPosition == this.Position)
+            if (this.HasEmotionTarget) {
+                if (emotion == EmotionType.Angry)
                 {
-                    // side effect to get HasTarget to register as false
-                    this.NextPosition = Vector2.Zero;
+                    this.AngryUpdate();
+                }
+                else if (emotion == EmotionType.Happy)
+                {
+                    this.HappyUpdate();
+                }
+                else if (emotion == EmotionType.Sad)
+                {
+                    this.SadUpdate();
+                }
+                else if (emotion == EmotionType.Terrified)
+                {
+                    this.TerrifiedUpdate();
+                }
+                else
+                {
+                    this.NeutralUpdate();
+                }
+
+                if (this.HasTargetPosition)
+                {
+                    this.Position = this.Position.PushTowards(this.NextPosition, this.MoveSpeed*Vector2.One);
+                    if (this.NextPosition == this.Position)
+                    {
+                        // side effect to get HasTargetPosition to register as false
+                        this.NextPosition = Vector2.Zero;
+                    }
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace EmotionIsland
                 {EmotionType.Happy, Color.Yellow},
                 {EmotionType.Sad, Color.Blue},
                 {EmotionType.Angry, Color.Red},
-                {EmotionType.Terrified, Color.Green},
+                {EmotionType.Terrified, Color.DarkGreen},
                 {EmotionType.Neutral, Color.Gray}
             };
 

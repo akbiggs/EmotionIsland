@@ -6,10 +6,18 @@ namespace EmotionIsland
     public class LivingObject : GameObject
     {
         private int invulnerableTimer = 0;
+        private int healTimer = 0;
+
+        public bool ShouldHeal
+        {
+            get { return healTimer >= 30; }
+        }
+
         public bool IsInvulnerable
         {
             get { return this.invulnerableTimer > 0; }
         }
+
         public int Health { get; private set; }
         public override bool IsAlive { 
             get { return Health > 0; }
@@ -66,6 +74,16 @@ namespace EmotionIsland
             // apply a flashing effect when damaged
             if (!(this.IsInvulnerable && this.invulnerableTimer%2 == 0))
                 base.Draw(spr);
+        }
+
+        public void Heal()
+        {
+            this.healTimer++;
+            if (this.ShouldHeal)
+            {
+                this.Health += 1;
+                this.healTimer = 0;
+            }
         }
     }
 }
