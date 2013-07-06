@@ -77,13 +77,17 @@ namespace EmotionIsland
 
         private void FireWeaponAt(Vector2 targetPosition)
         {
+            Vector2 direction = targetPosition - this.Position;
+            direction.Normalize();
             if (this.Beam == null)
             {
-                Vector2 direction = targetPosition - this.Position;
-                direction.Normalize();
                 EmotionBeam beam = new EmotionBeam(World, this.Position, direction, EmotionType);
                 this.Beam = beam;
                 World.Add(this.Beam);
+            }
+            else
+            {
+                this.Beam.Direction = direction;
             }
         }
 
