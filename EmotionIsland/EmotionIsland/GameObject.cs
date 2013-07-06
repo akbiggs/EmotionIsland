@@ -14,7 +14,7 @@ namespace EmotionIsland
 
         public Vector2 Size { get; set; }
         public Texture2D Texture { get; protected set; }
-        public Color Color { get; set; }
+        public virtual Color Color { get; set; }
 
         public GameObject(World world, Vector2 position, Vector2 size, Texture2D texture)
         {

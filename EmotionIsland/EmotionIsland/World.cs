@@ -7,8 +7,6 @@ namespace EmotionIsland
     public class World
     {
 
-        Texture2D tempTexture;
-
         int width;
         int height;
         int[] tiles;
@@ -22,6 +20,9 @@ namespace EmotionIsland
         {
             rand = new Random();
             this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
+
+            this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
+
             GenerateWorld();
         }
 
@@ -108,7 +109,6 @@ namespace EmotionIsland
                 }
             }
 
-
             this.villagers.Add(new Villager(this, new Vector2(40, 80), EmotionType.Angry));
             this.villagers.Add(new Villager(this, new Vector2(40, 120), EmotionType.Sad));
             this.villagers.Add(new Villager(this, new Vector2(40, 160), EmotionType.Happy));
@@ -192,6 +192,7 @@ namespace EmotionIsland
 
             foreach (var villager in villagers)
             {
+                villager.Anger(this.players[0]);
                 villager.Update();
             }
 

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace EmotionIsland
@@ -15,6 +17,7 @@ namespace EmotionIsland
             };
 
         private const float EMOTION_THRESHOLD = 0.5f;
+        private const float EMOTION_INCREMENT = 0.001f;
 
         // range -1 to 1 depending on level of emotion
         private float happyLevel = 0;
@@ -71,6 +74,32 @@ namespace EmotionIsland
         public Color ToColor()
         {
             return colorMappings[this.EmotionType];
+        }
+
+        public void IncreaseAnger()
+        {
+            Debug.WriteLine(this.angerLevel);
+            this.angerLevel += EMOTION_INCREMENT;
+            this.angerLevel = MathHelper.Clamp(this.angerLevel, -1, 1);
+        }
+
+        public void IncreaseTerror()
+        {
+            this.angerLevel -= EMOTION_INCREMENT;
+            this.angerLevel = MathHelper.Clamp(this.angerLevel, -1, 1);
+        }
+
+        public void IncreaseHappiness()
+        {
+            this.happyLevel += EMOTION_INCREMENT;
+            this.happyLevel = MathHelper.Clamp(this.happyLevel, -1, 1);
+            
+        }
+
+        public void IncreaseSadness()
+        {
+            this.happyLevel -= EMOTION_INCREMENT;
+            this.happyLevel = MathHelper.Clamp(this.happyLevel, -1, 1);
         }
     }
 
