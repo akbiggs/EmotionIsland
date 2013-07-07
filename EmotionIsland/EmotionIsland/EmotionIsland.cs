@@ -26,6 +26,7 @@ namespace EmotionIsland
             this.graphics.PreferredBackBufferHeight = 720;
             this.graphics.PreferredBackBufferWidth = 1280;
             Content.RootDirectory = "Content";
+            Input.init();
         }
 
         /// <summary>

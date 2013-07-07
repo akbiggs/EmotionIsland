@@ -22,6 +22,27 @@ namespace EmotionIsland
         private static KeyboardState keyboardPrev = Keyboard.GetState();
 
 #if KEYBOARD
+        public class ButtonEmulator
+        {
+            private PlayerIndex index;
+
+            public ButtonEmulator(PlayerIndex i)
+            {
+                index = i;
+            }
+
+            public ButtonState Start
+            {
+                get
+                {
+                    if (Input.IsKeyDown(KeyboardControls.Attack1, index))
+                        return ButtonState.Pressed;
+                    else
+                        return ButtonState.Released;
+                }
+            }
+        }
+
         public class GamePadStateEmulator
         {
             private PlayerIndex index;
@@ -29,9 +50,12 @@ namespace EmotionIsland
             public ThumbStickEmulator ThumbSticks;
             public TriggerEmulator Triggers;
 
+            public ButtonEmulator Buttons;
+
             public GamePadStateEmulator(PlayerIndex pIndex)
             {
                 index = pIndex;
+                Buttons = new ButtonEmulator(pIndex);
                 ThumbSticks = new ThumbStickEmulator(pIndex);
                 Triggers = new TriggerEmulator(pIndex);
             }

@@ -149,7 +149,7 @@ namespace EmotionIsland
             }
 
             //Create lakes
-            int lakes = rand.Next(2, 5);
+            int lakes = rand.Next(4, 10);
             for (int l = 0; l < lakes; l++)
             {
                 Vector2 origin = new Vector2(0, 0);
