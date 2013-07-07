@@ -117,10 +117,12 @@ namespace EmotionIsland
 
                     newTileBlock = World.collisionMap[tileX + tileY * World.width];
 
-                    if (newTileBlock == (int)World.BlockTiles.All ||
-                        (Velocity.X > 0 && newTileBlock != currentTileBlock && newTileBlock == (int)World.BlockTiles.Right) ||
-                        (Velocity.X < 0 && newTileBlock == (int)World.BlockTiles.Left))
-                        Position = new Vector2(originalLocation.X, Position.Y);
+                    if (currentTileBlock != newTileBlock)
+                    {
+                        if ((Velocity.X > 0 && (newTileBlock & (int)World.BlockTiles.Right) != 0) ||
+                            (Velocity.X < 0 && (newTileBlock & (int)World.BlockTiles.Left) != 0))
+                            Position = new Vector2(originalLocation.X, Position.Y);
+                    }
                 }
 
                 if (velocity.Y != 0)
@@ -128,8 +130,15 @@ namespace EmotionIsland
                     this.Position = new Vector2(this.Position.X, this.Position.Y + Velocity.Y);
                     tileX = ((int)Center.X / 32);
                     tileY = ((int)Center.Y / 32);
-                    if (World.collisionMap[tileX + tileY * World.width] == 1)
-                        Position = new Vector2(Position.X, originalLocation.Y);
+
+                    newTileBlock = World.collisionMap[tileX + tileY * World.width];
+
+                    if (currentTileBlock != newTileBlock)
+                    {
+                        if ((Velocity.Y > 0 && (newTileBlock & (int)World.BlockTiles.Down) != 0) ||
+                            (Velocity.Y < 0 && (newTileBlock & (int)World.BlockTiles.Up) != 0))
+                            Position = new Vector2(Position.X, originalLocation.Y);
+                    }
                 }
                 
                 

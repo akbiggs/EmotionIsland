@@ -38,7 +38,7 @@ namespace EmotionIsland
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = true;
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             graphics.PreferredBackBufferWidth = 720;
             graphics.PreferredBackBufferHeight = 480;
 

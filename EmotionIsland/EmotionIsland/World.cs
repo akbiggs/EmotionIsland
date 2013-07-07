@@ -19,11 +19,11 @@ namespace EmotionIsland
         public enum BlockTiles
         {
             Free = 0,
-            All,
-            Up,
-            Down,
-            Left,
-            Right
+            All = 15,
+            Up = 1,
+            Down = 2,
+            Left = 4,
+            Right = 8
         }
 
         int xPos;
@@ -328,9 +328,16 @@ namespace EmotionIsland
                             checkTile(c, r - 1, (int)BaseTiles.Grass))
                             tiles[tile] = 154; //BOTTOM with Grass on left
                         else if (checkTile(c, r + 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 7; //TOP
+                            collisionMap[tile] = (int)BlockTiles.Up;
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c, r - 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 10 + rand.Next(0, 3); //BOTTOM
+                            collisionMap[tile] = (int)BlockTiles.Up | (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Grass))
                         {
                             tiles[tile] = 16; //LEFT SIDE
@@ -341,6 +348,7 @@ namespace EmotionIsland
                         {
                             tiles[tile] = 18; //RIGHT SIDE
                             collisionMap[tile] = (int)BlockTiles.Right;
+                            collisionMap[tile - 1] = (int)BlockTiles.Left;
                         }
                         else
                             tiles[tile] = 3 + rand.Next(0, 3);//SAND
@@ -384,7 +392,6 @@ namespace EmotionIsland
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
-                        collisionMap[tile] = (int)BlockTiles.Free;
                         if (checkTile(c - 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
                             tiles[tile] = 135; //TOP BOTTOM LEFT
                         else if (checkTile(c + 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
