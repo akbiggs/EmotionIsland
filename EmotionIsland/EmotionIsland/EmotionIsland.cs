@@ -60,6 +60,7 @@ namespace EmotionIsland
 
             TextureBin.LoadContent(Content);
 
+            this.world = new World();
             FadeTo(Color.Transparent);
             this.ShouldDrawTitle = true;
         }
@@ -115,7 +116,6 @@ namespace EmotionIsland
                 Input.gps[(int)PlayerIndex.Four].Buttons.Start == ButtonState.Pressed))
             {
                 this.fadingTitle = true;
-                this.world = new World();
                 FadeTo(Color.Black);
             }
             base.Update(gameTime);

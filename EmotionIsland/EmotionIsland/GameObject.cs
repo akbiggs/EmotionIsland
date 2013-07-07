@@ -90,7 +90,7 @@ namespace EmotionIsland
 
         public virtual void OnCollide(GameObject gameObject)
         {
-            if (gameObject.IsSolid)
+            if (gameObject.IsSolid && this.IsSolid)
             {
                 Rectangle intersection = Rectangle.Intersect(this.BBox, gameObject.BBox);
                 if (intersection.Width > intersection.Height)
