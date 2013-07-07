@@ -97,7 +97,23 @@ namespace EmotionIsland
                     this.lastMovement = this.Velocity;
                 }
 
-                this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y + this.Velocity.Y);
+                Vector2 originalLocation = Position;
+                this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y);
+
+                int tileX = ((int)Center.X / 32);
+                int tileY = ((int)Center.Y / 32);
+                if (World.collisionMap[tileX + tileY * World.width] == 1)
+                    Position = new Vector2(originalLocation.X, Position.Y);
+                
+
+                this.Position = new Vector2(this.Position.X, this.Position.Y + Velocity.Y);
+                tileX = ((int)Center.X / 32);
+                tileY = ((int)Center.Y / 32);
+                if (World.collisionMap[tileX + tileY * World.width] == 1)
+                    Position = new Vector2(Position.X, originalLocation.Y);
+
+                
+                
             }
         }
 

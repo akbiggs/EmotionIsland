@@ -16,12 +16,23 @@ namespace EmotionIsland
             Mountain = 3
         }
 
+        public enum BlockTiles
+        {
+            Free = 0,
+            All,
+            Up,
+            Down,
+            Left,
+            Right
+        }
+
         int xPos;
         int yPos;
 
-        int width;
-        int height;
+        public int width;
+        public int height;
         int[] tiles;
+        public int[] collisionMap;
         int[] tempTiles;
         bool drawTemp;
 
@@ -39,7 +50,7 @@ namespace EmotionIsland
         public World()
         {
             rand = new Random();
-            this.players.Add(new Player(this, new Vector2(40, 40), PlayerNumber.One));
+            this.players.Add(new Player(this, new Vector2(20*32, 20*32), PlayerNumber.One));
 
             drawTemp = false;
             GenerateWorld();
@@ -62,6 +73,7 @@ namespace EmotionIsland
             height = 500;
             tempTiles = new int[width*height];
             tiles = new int[width * height];
+            collisionMap = new int[width * height];
 
             //Create rivers
             int rivers = rand.Next(2, 5);
@@ -290,6 +302,7 @@ namespace EmotionIsland
 
                     if (checkTile(c, r, (int)BaseTiles.Sand))
                     {
+                        collisionMap[tile] = (int)BlockTiles.Free;
                         if (checkTile(c - 1, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Grass))
                             tiles[tile] = 134; //TOP BOTTOM LEFT
                         else if (checkTile(c + 1, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Grass))
@@ -326,6 +339,7 @@ namespace EmotionIsland
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Water))
                     {
+                        collisionMap[tile] = (int)BlockTiles.All;
                         if (checkTile(c - 1, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Sand))
                             tiles[tile] = 130; //TOP BOTTOM LEFT
                         else if (checkTile(c + 1, r, (int)BaseTiles.Sand) && checkTile(c, r + 1, (int)BaseTiles.Sand))
@@ -361,6 +375,7 @@ namespace EmotionIsland
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
+                        collisionMap[tile] = (int)BlockTiles.Free;
                         if (checkTile(c - 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
                             tiles[tile] = 135; //TOP BOTTOM LEFT
                         else if (checkTile(c + 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
@@ -528,8 +543,10 @@ namespace EmotionIsland
 
         public void Update()
         {
-            if(DateTime.Now.Ticks - animationTimer > 1151000){
-                animationTimer = DateTime.Now.Ticks;
+            TimeSpan span = new TimeSpan(DateTime.Now.Ticks);
+            if (span.TotalMilliseconds - animationTimer > 100)
+            {
+                animationTimer = (long)span.TotalMilliseconds;
                 animationCounter += 1;
                 if (animationCounter > 3)
                     animationCounter = 0;
