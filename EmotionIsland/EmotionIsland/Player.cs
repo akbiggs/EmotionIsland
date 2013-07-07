@@ -9,7 +9,7 @@ namespace EmotionIsland
 {
     public class Player : LivingObject
     {
-        const int START_HEALTH = 3;
+        const int START_HEALTH = 300;
 
         private string lastDirection;
 
