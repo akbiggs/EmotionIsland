@@ -91,7 +91,7 @@ namespace EmotionIsland
             collisionMap = new int[width * height];
 
             //Create rivers
-            int rivers = rand.Next(2, 5);
+            int rivers = rand.Next(3, 6);
             for (int i = 0; i < rivers; i++)
             {
                 Vector2 origin = new Vector2(rand.Next(0, width), rand.Next(0, height));
@@ -149,7 +149,7 @@ namespace EmotionIsland
             }
 
             //Create lakes
-            int lakes = rand.Next(4, 10);
+            int lakes = rand.Next(8, 23);
             for (int l = 0; l < lakes; l++)
             {
                 Vector2 origin = new Vector2(0, 0);
@@ -158,7 +158,7 @@ namespace EmotionIsland
                     origin.X = rand.Next(0, width);
                     origin.Y = rand.Next(0, height);
                 }
-                recursiveGrowth((int)origin.X, (int)origin.Y, (int)BaseTiles.Water, (int)BaseTiles.Grass, rand.Next(20, 100));
+                recursiveGrowth((int)origin.X, (int)origin.Y, (int)BaseTiles.Water, (int)BaseTiles.Grass, rand.Next(40, 130));
             }
 
             //Create beaches
@@ -182,7 +182,7 @@ namespace EmotionIsland
             }
 
             //Create mountains
-            int mountains = rand.Next(2, 5);
+            int mountains = rand.Next(4, 9);
             for (int m = 0; m < mountains; m++)
             {
                 Vector2 origin = new Vector2(0, 0);
@@ -434,7 +434,12 @@ namespace EmotionIsland
                         else if (checkTile(c - 1, r, (int)BaseTiles.Sand))
                             tiles[tile] = 60; //RIGHT SIDE
                         else
-                            tiles[tile] = 13; //WATER
+                        {
+                            if (rand.Next(0, 15) == 0)
+                                tiles[tile] = 160;
+                            else
+                                tiles[tile] = 13; //WATER
+                        }
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
@@ -789,6 +794,60 @@ namespace EmotionIsland
 
                     }
 
+                    //Horizontal Bridges
+                    if (checkTile(c, r, (int)BaseTiles.Sand) && 
+                        checkTile(c, r+1, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Water) && 
+                        checkTile(c + 1, r+1, (int)BaseTiles.Water)){
+                            bool canBeBridged = true;
+                            int i = 1;
+                            for (i = 1; i < 15; i++)
+                            {
+                                if (checkTile(c + i, r, (int)BaseTiles.Sand) &&
+                                checkTile(c + i, r + 1, (int)BaseTiles.Sand))
+                                {
+                                    canBeBridged = true;
+                                    break;
+                                }
+                                else if (!checkTile(c + i, r, (int)BaseTiles.Water) ||
+                               !checkTile(c + i, r + 1, (int)BaseTiles.Water))
+                                {
+                                    canBeBridged = false;
+                                    break;
+                                }
+                            }
+
+                            if (canBeBridged)
+                            {
+                                if (!checkTile(c + i, r, (int)BaseTiles.Sand) ||
+                                !checkTile(c + i, r + 1, (int)BaseTiles.Sand))
+                                    canBeBridged = false;
+                            }
+
+                            if (canBeBridged && rand.Next(0,12) == 0)
+                            {
+                                collisionMap[tile + width] = (int)BlockTiles.Free;
+                                collisionMap[tile] = (int)BlockTiles.Free;
+                                tempTiles[tile] = (int)BaseTiles.Doodad;
+                                tempTiles[tile + width] = (int)BaseTiles.Doodad;
+
+                                for (int j = 1; j < i; j++)
+                                {
+                                    tiles[tile + j] = 94;
+                                    tiles[tile + j + width] = 104;
+
+                                    tempTiles[tile + j] = (int)BaseTiles.Doodad;
+                                    tempTiles[tile + width + j] = (int)BaseTiles.Doodad;
+                                    tempTiles[tile - width + j] = (int)BaseTiles.Doodad;
+
+                                    collisionMap[tile + j + width] = (int)BlockTiles.Free;
+                                    collisionMap[tile + j] = (int)BlockTiles.Free;
+                                }
+
+                            }
+                    }
+
+
                     //Do grass doodads
                     if (checkTile(c, r, (int)BaseTiles.Grass) && 
                         checkTile(c, r+1, (int)BaseTiles.Grass) && 
@@ -936,8 +995,8 @@ namespace EmotionIsland
         {
             //Calculate and limit the slope
             float m = ((origin.Y - destination.Y)/ (origin.X - destination.X));
-            if (Math.Abs(m) < 2)
-                m = 2;
+            if (Math.Abs(m) < 5)
+                m = 5;
 
             if (Math.Abs(m) > 20)
                 m = 20;
@@ -947,9 +1006,19 @@ namespace EmotionIsland
             int curve = rand.Next(50, 250);
 
             bool done = false;
+
+            int riverCurveType = rand.Next(0, 3);
+            float curveDivider = rand.Next(10, 30);
+
             for (float x = 0; x < width && !done; x += 0.05f)
             {
-                int curveOffset = (int)((float)curve * Math.Sin(x / 44f));
+                int curveOffset = 0;
+                if(riverCurveType == 0)
+                    curveOffset = (int)((float)curve * Math.Sin(x / curveDivider));
+                else if (riverCurveType == 0)
+                    curveOffset = (int)((float)curve * Math.Sin(x / curveDivider) * Math.Cos(x / curveDivider));
+                else if (riverCurveType == 0)
+                    curveOffset = (int)((float)curve * Math.Cos(x / curveDivider));
 
                 //Draw river
                 for (int w = 0; w < riverWidth; w++)
@@ -1155,32 +1224,20 @@ namespace EmotionIsland
                 this.Camera = new Camera2D(spr.GraphicsDevice.PresentationParameters.BackBufferWidth, spr.GraphicsDevice.PresentationParameters.BackBufferHeight);
             }
 
-            spr.Begin(SpriteSortMode.Deferred,
-                              BlendState.AlphaBlend,
-                              SamplerState.PointClamp,
-                              null,
-                              null,
-                              null,
-                              Camera.GetTransformation());
-
-            for (int r = 0; r < height; r++)
+            if (!drawTemp)
             {
-                for (int c = 0; c < width; c++)
-                {
-                    if (tiles[r * width + c] == 1)
-                    {
-                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Blue, 0, Vector2.Zero, 
-                            new Vector2(1, 1), SpriteEffects.None, 0);
-                    }
-                    else if (tiles[r * width + c] == 0)
-                    {
-                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Green, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
-                    }
-                    else if (tiles[r * width + c] == 2)
-                    {
-                        spr.Draw(TextureBin.Pixel, new Vector2(c, r), null, Color.Yellow, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
-                    }
-                }
+                spr.Begin(SpriteSortMode.Deferred,
+                                  BlendState.AlphaBlend,
+                                  SamplerState.PointClamp,
+                                  null,
+                                  null,
+                                  null,
+                                  Camera.GetTransformation());
+            }
+            else
+            {
+                spr.Begin(SpriteSortMode.Deferred,
+                                  BlendState.AlphaBlend);
             }
 
             if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.E))
