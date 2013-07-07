@@ -93,11 +93,7 @@ namespace EmotionIsland
         {
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin();
-
             world.Draw(spriteBatch);
-
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }

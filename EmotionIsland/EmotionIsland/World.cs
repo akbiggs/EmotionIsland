@@ -36,6 +36,8 @@ namespace EmotionIsland
         int[] tempTiles;
         bool drawTemp;
 
+        public Camera2D Camera;
+
         long animationTimer;
         int animationCounter;
 
@@ -538,6 +540,9 @@ namespace EmotionIsland
 
         public void Update()
         {
+            if (Camera != null)
+                Camera.Update(players[0].Position);
+
             TimeSpan span = new TimeSpan(DateTime.Now.Ticks);
             if (span.TotalMilliseconds - animationTimer > 100)
             {
@@ -600,6 +605,19 @@ namespace EmotionIsland
 
         public void Draw(SpriteBatch spr)
         {
+            if (Camera == null)
+            {
+                this.Camera = new Camera2D(spr.GraphicsDevice.PresentationParameters.BackBufferWidth, spr.GraphicsDevice.PresentationParameters.BackBufferHeight);
+            }
+
+            spr.Begin(SpriteSortMode.Deferred,
+                              BlendState.AlphaBlend,
+                              null,
+                              null,
+                              null,
+                              null,
+                              Camera.GetTransformation());
+
             for (int r = 0; r < height; r++)
             {
                 for (int c = 0; c < width; c++)
@@ -619,17 +637,6 @@ namespace EmotionIsland
                     }
                 }
             }
-
-            if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W) && yPos > 0)
-                yPos -= 10;
-            else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
-                yPos += 10;
-            else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) && xPos > 0)
-                xPos -= 10;
-            else if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
-                xPos += 10;
-
-
 
             if (Input.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.E))
                 drawTemp = !drawTemp;
@@ -664,6 +671,9 @@ namespace EmotionIsland
             }
             else
             {
+                yPos = (int)Camera.Center.Y/32;
+                xPos = (int)Camera.Center.X/32;
+
                 for (int r = yPos; r < yPos + 35; r++)
                 {
                     for (int c = xPos; c < xPos + 40; c++)
@@ -703,6 +713,8 @@ namespace EmotionIsland
             {
                 bullet.Draw(spr);
             }
+
+            spr.End();
         }
     }
 }
