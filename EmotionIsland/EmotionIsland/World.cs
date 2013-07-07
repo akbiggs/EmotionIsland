@@ -1141,8 +1141,6 @@ namespace EmotionIsland
         {
             if (Camera != null)
             {
-                Camera.Zoom = GetCameraZoom();
-
                 if (!this.PartyWiped)
                 {
                     Camera.Update(GetPlayerCenter());
