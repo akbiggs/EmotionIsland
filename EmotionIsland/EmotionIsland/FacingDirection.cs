@@ -2,6 +2,6 @@ namespace EmotionIsland
 {
     public enum FacingDirection
     {
-        Left=-1, Right=1
+        None=0, Left=-1, Right=1
     }
 }

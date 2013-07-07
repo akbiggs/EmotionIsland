@@ -7,17 +7,31 @@ namespace EmotionIsland
 {
     public class Emotion
     {
+        public static EmotionType RandomEmotion()
+        {
+            int roll = MathExtra.RandomInt(0, 5);
+            if (roll == 0) return EmotionType.Angry;
+            if (roll == 1) return EmotionType.Sad;
+            if (roll == 2) return EmotionType.Terrified;
+            if (roll == 3) return EmotionType.Sad;
+            return EmotionType.Neutral;
+        }
+
         private static Dictionary<EmotionType, Color> colorMappings = new Dictionary<EmotionType, Color>
             {
                 {EmotionType.Happy, Color.Yellow},
                 {EmotionType.Sad, Color.Blue},
                 {EmotionType.Angry, Color.Red},
                 {EmotionType.Terrified, Color.DarkGreen},
+                {EmotionType.Admirative, Color.LightGreen},
+                {EmotionType.Amazed, Color.LightBlue},
+                {EmotionType.Hateful, Color.Purple},
+                {EmotionType.Vigilant, Color.Orange},
                 {EmotionType.Neutral, Color.Gray}
             };
 
         private const float EMOTION_THRESHOLD = 0.5f;
-        private const float EMOTION_INCREMENT = 0.008f;
+        private const float EMOTION_INCREMENT = 0.2f;
 
         // range -1 to 1 depending on level of emotion
         private float happyLevel = 0;
@@ -27,6 +41,10 @@ namespace EmotionIsland
         {
             get
             {
+                if (happyLevel > EMOTION_THRESHOLD && angerLevel > EMOTION_THRESHOLD) return EmotionType.Vigilant;
+                if (happyLevel > EMOTION_THRESHOLD && angerLevel < -EMOTION_THRESHOLD) return EmotionType.Admirative;
+                if (happyLevel < -EMOTION_THRESHOLD && angerLevel > EMOTION_THRESHOLD) return EmotionType.Hateful;
+                if (happyLevel < -EMOTION_THRESHOLD && angerLevel < -EMOTION_THRESHOLD) return EmotionType.Amazed;
                 if (happyLevel < -EMOTION_THRESHOLD)
                 {
                     return EmotionType.Sad;
@@ -79,6 +97,31 @@ namespace EmotionIsland
         public Color ToColor()
         {
             return colorMappings[this.EmotionType];
+        }
+
+        public String ToString()
+        {
+            switch (EmotionType)
+            {
+                case EmotionType.Angry:
+                    return "angry";
+                case EmotionType.Sad:
+                    return "sad";
+                case EmotionType.Terrified:
+                    return "scared";
+                case EmotionType.Happy:
+                    return "happy";
+                default:
+                    return "neutral";
+                    //case EmotionType.Angry:
+                    //    return "angry";
+                    //case EmotionType.Angry:
+                    //    return "angry";
+                    //case EmotionType.Angry:
+                    //    return "angry";
+                    //case EmotionType.Angry:
+                    //    return "angry";
+            }
         }
 
         public void IncreaseAnger()

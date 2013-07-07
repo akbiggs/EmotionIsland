@@ -1,4 +1,5 @@
 
+using EmotionIsland.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -43,6 +44,7 @@ namespace EmotionIsland
         int animationCounter;
 
         private BufferedList<Player> players = new BufferedList<Player>();
+        public BufferedList<Player> Players { get { return players; } }
         private BufferedList<Villager> villagers = new BufferedList<Villager>();
         public BufferedList<Villager> Villagers { get { return villagers; } }
 
@@ -50,6 +52,8 @@ namespace EmotionIsland
         private BufferedList<Bullet> bullets = new BufferedList<Bullet>();
 
         private Random rand;
+        private int spawnTime = 500;
+
         public World()
         {
             rand = new Random();
@@ -681,7 +685,7 @@ namespace EmotionIsland
         public void Update()
         {
             if (Camera != null)
-                Camera.Update(players[0].Position);
+                Camera.Update(GetPlayerCenter());
 
             TimeSpan span = new TimeSpan(DateTime.Now.Ticks);
             if (span.TotalMilliseconds - animationTimer > 200)
@@ -692,6 +696,12 @@ namespace EmotionIsland
                     animationCounter = 0;
             }
 
+            if (++this.Timer%spawnTime == 0)
+            {
+                SpawnWaveOfVillagers();
+                this.spawnTime = MathExtra.RandomInt(200, 500);
+            }
+
             foreach (Player player in this.players)
             {
                 player.Update();
@@ -699,11 +709,17 @@ namespace EmotionIsland
                 {
                     player.HandleCollision(bullet);
                 }
+                foreach (var villager in Villagers)
+                {
+                    player.HandleCollision(villager);
+                }
             }
 
             if (this.PartyWiped())
             {
-                villagers.ForEach(villager => {villager.Emotion = new Emotion(EmotionType.Neutral); villager.OnEmotionChanged(null);});
+                villagers.ForEach(villager => {villager.Emotion = new Emotion(EmotionType.Neutral);
+                    //villager.OnEmotionChanged(null);
+                });
             }
 
             foreach (var villager in villagers)
@@ -712,6 +728,13 @@ namespace EmotionIsland
                 foreach (var bullet in bullets)
                 {
                     villager.HandleCollision(bullet);
+                }
+                foreach (var other in Villagers)
+                {
+                    if (other != villager)
+                    {
+                        villager.HandleCollision(other);
+                    }
                 }
             }
 
@@ -736,6 +759,37 @@ namespace EmotionIsland
             villagers.ApplyBuffers();
             emotionBeams.ApplyBuffers();
             bullets.ApplyBuffers();
+        }
+
+        private Vector2 GetPlayerCenter()
+        {
+            Vector2 center = Vector2.Zero;
+            foreach (Player player in Players)
+            {
+                center += player.Center;
+            }
+
+            center = center/Players.Count;
+            return center;
+        }
+
+        private void SpawnWaveOfVillagers()
+        {
+            Player randomPlayer = players[MathExtra.RandomInt(players.Count)];
+            Vector2 spawnOffset = randomPlayer.GetLastMovementDirection()*550;
+            EmotionType randomEmotion = Emotion.RandomEmotion();
+
+            for (int i = 0; i < MathExtra.RandomInt(5, 15); i++)
+            {
+                Villager villager = new Villager(this, randomPlayer.Position + spawnOffset + new Vector2(MathExtra.RandomInt(0, 200), MathExtra.RandomInt(0, 200)), randomEmotion);
+                villager.EmotionalTarget = randomPlayer;
+                this.Add(villager);
+            }
+        }
+
+        protected int Timer
+        {
+            get; set;
         }
 
         private bool PartyWiped()

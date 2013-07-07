@@ -74,6 +74,10 @@ namespace EmotionIsland
                 {
                     this.TerrifiedUpdate();
                 }
+                else if (emotion == EmotionType.Admirative) this.AdmirativeUpdate();
+                else if (emotion == EmotionType.Hateful) this.HatefulUpdate();
+                else if (emotion == EmotionType.Vigilant) this.VigilantUpdate();
+                else if (emotion == EmotionType.Amazed) this.AmazedUpdate();
                 else
                 {
                     this.NeutralUpdate();
@@ -81,11 +85,17 @@ namespace EmotionIsland
 
                 if (this.HasTargetPosition)
                 {
-                    this.Position = this.Position.PushTowards(this.NextPosition, this.MoveSpeed*Vector2.One);
                     if (this.NextPosition == this.Position)
                     {
                         // side effect to get HasTargetPosition to register as false
                         this.NextPosition = Vector2.Zero;
+                    }
+                    else
+                    {
+                        Vector2 displacement = this.Position.PushTowards(this.NextPosition, this.MoveSpeed*Vector2.One);
+                        this.Velocity = displacement - this.Position;
+                        if (this.Velocity.LengthSquared() < 0.1f*0.1f)
+                            this.Velocity = Vector2.Zero;
                     }
                 }
             }
@@ -151,7 +161,23 @@ namespace EmotionIsland
         {
         }
 
+        public virtual void VigilantUpdate()
+        {
+        }
+
         public virtual void HappyUpdate()
+        {
+        }
+
+        public virtual void AdmirativeUpdate()
+        {
+        }
+
+        public virtual void AmazedUpdate()
+        {
+        }
+
+        public virtual void HatefulUpdate()
         {
         }
 
@@ -174,7 +200,7 @@ namespace EmotionIsland
 
         public virtual void Stun()
         {
-            this.stunTimer = 100;
+            this.stunTimer = 50;
         }
     }
 }
