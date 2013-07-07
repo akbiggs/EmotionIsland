@@ -52,7 +52,7 @@ namespace EmotionIsland
         public World()
         {
             rand = new Random();
-            this.players.Add(new Player(this, new Vector2(20*32, 20*32), PlayerNumber.One));
+            this.players.Add(new Player(this, new Vector2(40*32, 40*32), PlayerNumber.One));
 
             drawTemp = false;
             GenerateWorld();
@@ -677,22 +677,25 @@ namespace EmotionIsland
             }
             else
             {
-                yPos = (int)Camera.Center.Y/32;
-                xPos = (int)Camera.Center.X/32;
-
-                for (int r = yPos; r < yPos + 35; r++)
+                yPos = (int)Camera.TopLeft.Y/32;
+                xPos = (int)Camera.TopLeft.X/32;
+                if (yPos < 0)
+                    yPos = 0;
+                if (xPos < 0)
+                    xPos = 0;
+                for (int r = yPos; r < yPos + 70; r++)
                 {
-                    for (int c = xPos; c < xPos + 40; c++)
+                    for (int c = xPos; c < xPos + 80; c++)
                     {
                         if (tiles[r * width + c] >= 20 && tiles[r * width + c]%10 == 0)
                         {
-                            spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
+                            spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32, r * 32),
                                 new Rectangle((tiles[r * width + c] % 10) * 32 + animationCounter*32, (tiles[r * width + c] / 10) * 32, 32, 32),
                                 Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
                         }
                         else
                         {
-                            spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32 - xPos * 32, r * 32 - yPos * 32),
+                            spr.Draw(TextureBin.Get("tileset"), new Vector2(c * 32, r * 32),
                                 new Rectangle((tiles[r * width + c] % 10) * 32, (tiles[r * width + c] / 10) * 32, 32, 32),
                                 Color.White, 0, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 0);
                         }
