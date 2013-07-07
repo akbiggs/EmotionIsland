@@ -1120,7 +1120,10 @@ namespace EmotionIsland
             if (obj is Player)
             {
                 Player player = (Player) obj;
-                player.Beam.Stopped = true;
+                if (player.Beam != null)
+                {
+                    player.Beam.Stopped = true;
+                }
                 this.players.BufferRemove(player);
             }
             else if (obj is Villager)
@@ -1152,7 +1155,7 @@ namespace EmotionIsland
                 PlayerIndex index;
                 if (!PartyWiped && PlayerIndex.TryParse(value: i.ToString(), result: out index))
                 {
-                    if (Input.gps[(int)index-1].IsConnected && Input.gps[(int)index-1].Buttons.Start == ButtonState.Pressed && NoPlayerWith(index))
+                    if (Input.gps[(int)index-1].IsConnected && Input.gps[(int)index-1].Buttons.Start == ButtonState.Pressed && NoPlayerWith(index-1))
                         this.Add(new Player(this, players[0].Position + new Vector2(50, 50), Player.Nums[(int)index]));
                 }
             }
@@ -1267,19 +1270,33 @@ namespace EmotionIsland
 
         private void SpawnWaveOfVillagers()
         {
+            if (players.Count <= 0)
+                return;
+
             Player randomPlayer = players[MathExtra.RandomInt(players.Count)];
 
             Vector2 spawnOffset = new Vector2(0, 0);
-            while (checkTile((int)spawnOffset.X, (int)spawnOffset.Y, (int)BaseTiles.Water) == true)
+            int counter = 0;
+            while (counter < 10 && checkTile((int)spawnOffset.X, (int)spawnOffset.Y, (int)BaseTiles.Water) == true)
             {
-                spawnOffset = new Vector2(randomPlayer.Position.X / 32 + rand.Next(10, 30), randomPlayer.Position.Y / 32 + rand.Next(10, 30));
+                counter++;
+                spawnOffset = new Vector2(randomPlayer.Position.X / 32, randomPlayer.Position.Y / 32);
+                if (randomPlayer.Velocity.X > 0)
+                    spawnOffset.X += +rand.Next(15, 20);
+                else
+                    spawnOffset.X -= +rand.Next(15, 20);
+
+                if (randomPlayer.Velocity.Y > 0)
+                    spawnOffset.Y += rand.Next(15, 15);
+                else
+                    spawnOffset.Y -= rand.Next(15, 15);
             }
 
-            spawnOffset = new Vector2(spawnOffset.X * 32, spawnOffset.Y * 32);
+            spawnOffset = new Vector2(spawnOffset.X * 32 - randomPlayer.Position.X, spawnOffset.Y * 32 - randomPlayer.Position.Y);
 
             EmotionType randomEmotion = Emotion.RandomEmotion();
 
-            for (int i = 0; i < MathExtra.RandomInt(5, 15); i++)
+            for (int i = 0; i < MathExtra.RandomInt(20, 30); i++)
             {
                 Villager villager = new Villager(this, randomPlayer.Position + spawnOffset + new Vector2(MathExtra.RandomInt(0, 200), MathExtra.RandomInt(0, 200)), randomEmotion);
                 villager.EmotionalTarget = randomPlayer;

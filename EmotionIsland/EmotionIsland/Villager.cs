@@ -56,6 +56,7 @@ namespace EmotionIsland
         public Villager(World world, Vector2 pos, EmotionType emotion) 
             : base(world, pos, new Vector2(32), TextureBin.Pixel, 3, emotion)
         {
+            MoveSpeed = 2.8f;
             CollidesWithWorld = true;
             this.body = new GameObject(this.World, this.Position, this.Size, TextureBin.Pixel);
             this.head = new GameObject(this.World, this.Position, this.Size, TextureBin.Pixel);
@@ -138,6 +139,10 @@ namespace EmotionIsland
         public override void Update()
         {
             Player player = this.FindClosestPlayer();
+            if (player == null)
+            {
+                World.Remove(this);
+            }
             if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 20000000)
             {
                 World.Remove(this);
@@ -167,6 +172,8 @@ namespace EmotionIsland
                     this.body.ChangeAnimation("idle_" + this.GetEnding());
                 }
             }
+
+            
         }
 
         public void UpdateAnimation()
