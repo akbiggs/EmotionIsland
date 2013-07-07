@@ -39,7 +39,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -89,6 +89,7 @@
     <Compile Include="Helpers\VectorHelper.cs" />
     <Compile Include="IEmotionalAI.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Input_.cs" />
     <Compile Include="LivingObject.cs" />
     <Compile Include="MathExtra.cs" />
     <Compile Include="Particle.cs" />

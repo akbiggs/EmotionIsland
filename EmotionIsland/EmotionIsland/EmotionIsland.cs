@@ -80,12 +80,21 @@ namespace EmotionIsland
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (Input.KeyboardTapped(Keys.Q))
+            if (Input.KeyPressed(Keys.Q))
                 world.GenerateWorld();
 
             Input.Update();
 
             this.world.Update();
+
+            if (this.world.PartyWiped && 
+                (Input.gps[(int)PlayerIndex.One].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Two].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Three].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Four].Buttons.Start == ButtonState.Pressed))
+            {
+                this.world = new World();
+            }
 
             base.Update(gameTime);
         }

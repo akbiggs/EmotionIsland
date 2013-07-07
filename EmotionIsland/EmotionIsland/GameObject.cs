@@ -21,14 +21,14 @@ namespace EmotionIsland
             get
             {
                 if (facingDirection == FacingDirection.None)
-                    return lastMovement.X < 0 ? FacingDirection.Left : FacingDirection.Right;
+                    return LastMovement.X < 0 ? FacingDirection.Left : FacingDirection.Right;
                 else
                     return facingDirection;
             }
             set { facingDirection = value; }
         }
         
-        Vector2 lastMovement = new Vector2();
+        public Vector2 LastMovement = new Vector2();
 
         public int FrameDuration { get; set; }
 
@@ -137,7 +137,7 @@ namespace EmotionIsland
 
                 if (this.Velocity.X != 0)
                 {
-                    this.lastMovement = this.Velocity;
+                    this.LastMovement = this.Velocity;
                 }
 
                 Vector2 originalLocation = Position;
