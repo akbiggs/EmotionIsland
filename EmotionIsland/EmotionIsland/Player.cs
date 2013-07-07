@@ -13,7 +13,8 @@ namespace EmotionIsland
 
         public override bool IsSolid
         {
-            get { return true; }
+            //get { return true; }
+            get { return false; }
         }
 
         private string lastDirection;
@@ -59,11 +60,11 @@ namespace EmotionIsland
             {
                 case PlayerNumber.One: this.EmotionType = EmotionType.Angry;
                     break;
-                case PlayerNumber.Two: this.EmotionType = EmotionType.Happy;
+                case PlayerNumber.Two: this.EmotionType = EmotionType.Sad;
                     break;
-                case PlayerNumber.Three: this.EmotionType = EmotionType.Sad;
+                case PlayerNumber.Three: this.EmotionType = EmotionType.Terrified;
                     break;
-                case PlayerNumber.Four: this.EmotionType = EmotionType.Terrified;
+                case PlayerNumber.Four: this.EmotionType = EmotionType.Happy;
                     break;
                 default:
                     this.EmotionType = EmotionType.Neutral;

@@ -261,7 +261,7 @@ namespace EmotionIsland
         public override void AngryUpdate()
         {
             this.NextPosition = this.EmotionalTarget.Position;
-            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(10, 2))
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(40, 2))
             {
                 this.Attack(this.EmotionalTarget);
             }
@@ -275,7 +275,7 @@ namespace EmotionIsland
             {
                 Vector2 direction = target.Position - this.Position;
                 direction.Normalize();
-                this.World.Add(new SlashAttack(this.World, this.Position + direction, this, direction));
+                this.World.Add(new SlashAttack(this.World, this.Position, this, direction));
                 this.attackCoolDownTimer = 30;
             }
         }
