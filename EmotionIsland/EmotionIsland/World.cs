@@ -1268,7 +1268,14 @@ namespace EmotionIsland
         private void SpawnWaveOfVillagers()
         {
             Player randomPlayer = players[MathExtra.RandomInt(players.Count)];
-            Vector2 spawnOffset = randomPlayer.GetLastMovementDirection()*new Vector2(600);
+
+            Vector2 spawnOffset = new Vector2(0, 0);
+            while (checkTile((int)spawnOffset.X, (int)spawnOffset.Y, (int)BaseTiles.Water) == true)
+            {
+                spawnOffset = new Vector2(randomPlayer.Position.X / 32 + rand.Next(10, 30), randomPlayer.Position.Y / 32 + rand.Next(10, 30));
+            }
+
+            spawnOffset = new Vector2(spawnOffset.X * 32, spawnOffset.Y * 32);
 
             EmotionType randomEmotion = Emotion.RandomEmotion();
 
