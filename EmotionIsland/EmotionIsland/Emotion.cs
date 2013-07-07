@@ -113,6 +113,11 @@ namespace EmotionIsland
         Angry,
         Terrified,
         Happy,
-        Sad
+        Sad,
+
+        Vigilant,
+        Admirative,
+        Amazed,
+        Hateful
     }
 }

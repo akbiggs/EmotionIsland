@@ -53,6 +53,8 @@ namespace EmotionIsland
             {
                 particle.Update();
             }
+
+            Particles.ApplyBuffers();
         }
 
         private void SpawnParticle()

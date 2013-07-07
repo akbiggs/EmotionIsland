@@ -614,11 +614,12 @@ namespace EmotionIsland
             if (Camera == null)
             {
                 this.Camera = new Camera2D(spr.GraphicsDevice.PresentationParameters.BackBufferWidth, spr.GraphicsDevice.PresentationParameters.BackBufferHeight);
+                this.Camera.Zoom = 1.5f;
             }
 
             spr.Begin(SpriteSortMode.Deferred,
                               BlendState.AlphaBlend,
-                              null,
+                              SamplerState.PointClamp,
                               null,
                               null,
                               null,
@@ -683,9 +684,9 @@ namespace EmotionIsland
                     yPos = 0;
                 if (xPos < 0)
                     xPos = 0;
-                for (int r = yPos; r < yPos + 70; r++)
+                for (int r = yPos; r < yPos + 70*(1.5f); r++)
                 {
-                    for (int c = xPos; c < xPos + 80; c++)
+                    for (int c = xPos; c < xPos + 80*(1.5f); c++)
                     {
                         if (tiles[r * width + c] >= 20 && tiles[r * width + c]%10 == 0)
                         {
