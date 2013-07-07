@@ -39,6 +39,8 @@ namespace EmotionIsland
         public virtual bool ShouldRemove { get { return !this.IsAlive; } }
         public virtual bool IsAlive { get; set; }
 
+        public bool CollidesWithWorld;
+
         // TODO: Implement this. We need this for garbage collecting dead stuff.
         public bool IsOffscreen { get { return false; } }
 
@@ -74,7 +76,7 @@ namespace EmotionIsland
 
             this.Color = Color.White;
             this.IsAlive = true;
-
+            CollidesWithWorld = false;
             this.FrameDuration = 4;
         }
 
@@ -140,44 +142,57 @@ namespace EmotionIsland
 
                 Vector2 originalLocation = Position;
 
-                int tileX = 0;
-                int tileY = 0;
-                int currentTileBlock = World.collisionMap[((int)Center.X / 32) + ((int)Center.Y / 32) * World.width];
+                int tileX = ((int)Center.X / 32);
+                int tileY = ((int)Center.Y / 32);
+
+                if (tileX < 0 || tileX >= World.width || tileY < 0 || tileY >= World.height)
+                {
+                    IsAlive = false;
+                    return;
+                }
+
+                int currentTileBlock = World.collisionMap[tileX + tileY * World.width];
                 int newTileBlock = 0;
 
                 if (velocity.X != 0)
                 {
                     this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y);
 
-                    tileX = ((int)Center.X / 32);
-                    tileY = ((int)Center.Y / 32);
-
-                    if (tileX < 0)
-                        return;
-
-                    newTileBlock = World.collisionMap[tileX + tileY * World.width];
-
-                    if (currentTileBlock != newTileBlock)
+                    if (CollidesWithWorld)
                     {
-                        if ((Velocity.X > 0 && (newTileBlock & (int)World.BlockTiles.Right) != 0) ||
-                            (Velocity.X < 0 && (newTileBlock & (int)World.BlockTiles.Left) != 0))
-                            Position = new Vector2(originalLocation.X, Position.Y);
+                        tileX = ((int)Center.X / 32);
+                        tileY = ((int)Center.Y / 32);
+
+                        if (tileX < 0)
+                            return;
+
+                        newTileBlock = World.collisionMap[tileX + tileY * World.width];
+
+                        if (currentTileBlock != newTileBlock)
+                        {
+                            if ((Velocity.X > 0 && (newTileBlock & (int)World.BlockTiles.Right) != 0) ||
+                                (Velocity.X < 0 && (newTileBlock & (int)World.BlockTiles.Left) != 0))
+                                Position = new Vector2(originalLocation.X, Position.Y);
+                        }
                     }
                 }
 
                 if (velocity.Y != 0)
                 {
                     this.Position = new Vector2(this.Position.X, this.Position.Y + Velocity.Y);
-                    tileX = ((int)Center.X / 32);
-                    tileY = ((int)Center.Y / 32);
-
-                    newTileBlock = World.collisionMap[tileX + tileY * World.width];
-
-                    if (currentTileBlock != newTileBlock)
+                    if (CollidesWithWorld)
                     {
-                        if ((Velocity.Y > 0 && (newTileBlock & (int)World.BlockTiles.Down) != 0) ||
-                            (Velocity.Y < 0 && (newTileBlock & (int)World.BlockTiles.Up) != 0))
-                            Position = new Vector2(Position.X, originalLocation.Y);
+                        tileX = ((int)Center.X / 32);
+                        tileY = ((int)Center.Y / 32);
+
+                        newTileBlock = World.collisionMap[tileX + tileY * World.width];
+
+                        if (currentTileBlock != newTileBlock)
+                        {
+                            if ((Velocity.Y > 0 && (newTileBlock & (int)World.BlockTiles.Down) != 0) ||
+                                (Velocity.Y < 0 && (newTileBlock & (int)World.BlockTiles.Up) != 0))
+                                Position = new Vector2(Position.X, originalLocation.Y);
+                        }
                     }
                 }
                 
