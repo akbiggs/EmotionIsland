@@ -614,7 +614,6 @@ namespace EmotionIsland
             if (Camera == null)
             {
                 this.Camera = new Camera2D(spr.GraphicsDevice.PresentationParameters.BackBufferWidth, spr.GraphicsDevice.PresentationParameters.BackBufferHeight);
-                this.Camera.Zoom = 2f;
             }
 
             spr.Begin(SpriteSortMode.Deferred,
