@@ -847,6 +847,60 @@ namespace EmotionIsland
                             }
                     }
 
+                    //Vertical Bridges
+                    if (checkTile(c, r, (int)BaseTiles.Sand) &&
+                        checkTile(c+1, r, (int)BaseTiles.Sand) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Water) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Water))
+                    {
+                        bool canBeBridged = true;
+                        int i = 1;
+                        for (i = 1; i < 15; i++)
+                        {
+                            if (checkTile(c, r+i, (int)BaseTiles.Sand) &&
+                            checkTile(c + 1, r + i, (int)BaseTiles.Sand))
+                            {
+                                canBeBridged = true;
+                                break;
+                            }
+                            else if (!checkTile(c, r+i, (int)BaseTiles.Water) ||
+                           !checkTile(c + 1, r + i, (int)BaseTiles.Water))
+                            {
+                                canBeBridged = false;
+                                break;
+                            }
+                        }
+
+                        if (canBeBridged)
+                        {
+                            if (!checkTile(c, r + i, (int)BaseTiles.Sand) ||
+                            !checkTile(c + 1, r + i, (int)BaseTiles.Sand))
+                                canBeBridged = false;
+                        }
+
+                        if (canBeBridged && rand.Next(0, 12) == 0)
+                        {
+                            collisionMap[tile + 1] = (int)BlockTiles.Free;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+
+                            for (int j = 1; j < i; j++)
+                            {
+                                tiles[tile + j*width] = 95;
+                                tiles[tile + 1 + j*width] = 96;
+
+                                tempTiles[tile + j * width] = (int)BaseTiles.Doodad;
+                                tempTiles[tile + 1 + j * width] = (int)BaseTiles.Doodad;
+                                tempTiles[tile - 1 + j * width] = (int)BaseTiles.Doodad;
+
+                                collisionMap[tile + j * width] = (int)BlockTiles.Free;
+                                collisionMap[tile + j * width + 1] = (int)BlockTiles.Free;
+                            }
+
+                        }
+                    }
+
 
                     //Do grass doodads
                     if (checkTile(c, r, (int)BaseTiles.Grass) && 
