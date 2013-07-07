@@ -28,6 +28,7 @@ namespace EmotionIsland
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            Input.init();
         }
 
         /// <summary>
