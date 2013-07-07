@@ -77,7 +77,7 @@ namespace EmotionIsland
 
         public virtual void Update()
         {
-            if (this.ShouldRemove)
+            if (ShouldRemove)
             {
                 this.World.Remove(this);
             }
@@ -98,20 +98,39 @@ namespace EmotionIsland
                 }
 
                 Vector2 originalLocation = Position;
-                this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y);
 
-                int tileX = ((int)Center.X / 32);
-                int tileY = ((int)Center.Y / 32);
-                if (World.collisionMap[tileX + tileY * World.width] == 1)
-                    Position = new Vector2(originalLocation.X, Position.Y);
-                
 
-                this.Position = new Vector2(this.Position.X, this.Position.Y + Velocity.Y);
-                tileX = ((int)Center.X / 32);
-                tileY = ((int)Center.Y / 32);
-                if (World.collisionMap[tileX + tileY * World.width] == 1)
-                    Position = new Vector2(Position.X, originalLocation.Y);
+                int tileX = 0;
+                int tileY = 0;
+                int currentTileBlock = World.collisionMap[((int)Center.X / 32) + ((int)Center.Y / 32) * World.width];
+                int newTileBlock = 0;
 
+                if (velocity.X != 0)
+                {
+                    this.Position = new Vector2(this.Position.X + this.Velocity.X, this.Position.Y);
+
+                    tileX = ((int)Center.X / 32);
+                    tileY = ((int)Center.Y / 32);
+
+                    if (tileX < 0)
+                        return;
+
+                    newTileBlock = World.collisionMap[tileX + tileY * World.width];
+
+                    if (newTileBlock == (int)World.BlockTiles.All ||
+                        (Velocity.X > 0 && newTileBlock != currentTileBlock && newTileBlock == (int)World.BlockTiles.Right) ||
+                        (Velocity.X < 0 && newTileBlock == (int)World.BlockTiles.Left))
+                        Position = new Vector2(originalLocation.X, Position.Y);
+                }
+
+                if (velocity.Y != 0)
+                {
+                    this.Position = new Vector2(this.Position.X, this.Position.Y + Velocity.Y);
+                    tileX = ((int)Center.X / 32);
+                    tileY = ((int)Center.Y / 32);
+                    if (World.collisionMap[tileX + tileY * World.width] == 1)
+                        Position = new Vector2(Position.X, originalLocation.Y);
+                }
                 
                 
             }

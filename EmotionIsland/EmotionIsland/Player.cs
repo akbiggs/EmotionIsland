@@ -79,7 +79,7 @@ namespace EmotionIsland
         public override void Update()
         {
             base.Update();
-
+            
             if (this.Beam != null)
             {
                 this.Beam.BasePosition = this.Position;

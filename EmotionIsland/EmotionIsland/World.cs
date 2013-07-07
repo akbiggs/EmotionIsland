@@ -55,11 +55,11 @@ namespace EmotionIsland
             drawTemp = false;
             GenerateWorld();
 
-            this.villagers.Add(new Villager(this, new Vector2(200, 80), EmotionType.Angry));
+            //this.villagers.Add(new Villager(this, new Vector2(200, 80), EmotionType.Angry));
             this.villagers.Add(new Villager(this, new Vector2(200, 120), EmotionType.Sad));
-            this.villagers.Add(new Villager(this, new Vector2(200, 160), EmotionType.Happy));
+            //this.villagers.Add(new Villager(this, new Vector2(200, 160), EmotionType.Happy));
             this.villagers.Add(new Villager(this, new Vector2(200, 200), EmotionType.Terrified));
-            this.villagers.Add(new Villager(this, new Vector2(200, 240), EmotionType.Neutral));
+            //this.villagers.Add(new Villager(this, new Vector2(200, 240), EmotionType.Neutral));
             this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
 
@@ -330,9 +330,15 @@ namespace EmotionIsland
                         else if (checkTile(c, r - 1, (int)BaseTiles.Grass))
                             tiles[tile] = 10 + rand.Next(0, 3); //BOTTOM
                         else if (checkTile(c + 1, r, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 16; //LEFT SIDE
+                            collisionMap[tile] = (int)BlockTiles.Left;
+                        }
                         else if (checkTile(c - 1, r, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 18; //RIGHT SIDE
+                            collisionMap[tile] = (int)BlockTiles.Right;
+                        }
                         else
                             tiles[tile] = 3 + rand.Next(0, 3);//SAND
                         
