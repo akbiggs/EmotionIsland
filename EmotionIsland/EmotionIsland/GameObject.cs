@@ -185,6 +185,8 @@ namespace EmotionIsland
                         tileX = ((int)Center.X / 32);
                         tileY = ((int)Center.Y / 32);
 
+                        if (tileY < 0)
+                            return;
                         newTileBlock = World.collisionMap[tileX + tileY * World.width];
 
                         if (currentTileBlock != newTileBlock)
