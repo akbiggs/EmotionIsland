@@ -1,9 +1,11 @@
 
+using System.Diagnostics;
 using EmotionIsland.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 
 namespace EmotionIsland
 {
@@ -1117,7 +1119,9 @@ namespace EmotionIsland
             obj.IsAlive = false;
             if (obj is Player)
             {
-                this.players.BufferRemove((Player)obj);
+                Player player = (Player) obj;
+                player.Beam.Stopped = true;
+                this.players.BufferRemove(player);
             }
             else if (obj is Villager)
             {
@@ -1137,15 +1141,21 @@ namespace EmotionIsland
         {
             if (Camera != null)
             {
-                Camera.Zoom = GetCameraZoom();
-
                 if (!this.PartyWiped)
                 {
                     Camera.Update(GetPlayerCenter());
                     this.LastCameraPos = GetPlayerCenter();
                 }
             }
-
+            for (int i = 2; i <= 4; i++)
+            {
+                PlayerIndex index;
+                if (!PartyWiped && PlayerIndex.TryParse(value: i.ToString(), result: out index))
+                {
+                    if (Input.gps[(int)index-1].IsConnected && Input.gps[(int)index-1].Buttons.Start == ButtonState.Pressed && NoPlayerWith(index))
+                        this.Add(new Player(this, players[0].Position + new Vector2(50, 50), Player.Nums[(int)index]));
+                }
+            }
             TimeSpan span = new TimeSpan(DateTime.Now.Ticks);
             if (span.TotalMilliseconds - animationTimer > 200)
             {
@@ -1219,6 +1229,15 @@ namespace EmotionIsland
             villagers.ApplyBuffers();
             emotionBeams.ApplyBuffers();
             bullets.ApplyBuffers();
+        }
+
+        private bool NoPlayerWith(PlayerIndex index)
+        {
+            foreach (Player player in players)
+            {
+                if (player.PlayerIndex == index) return false;
+            }
+            return true;
         }
 
         private float GetCameraZoom()

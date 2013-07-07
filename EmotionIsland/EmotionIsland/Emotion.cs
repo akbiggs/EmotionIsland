@@ -13,7 +13,8 @@ namespace EmotionIsland
             if (roll == 0) return EmotionType.Angry;
             if (roll == 1) return EmotionType.Sad;
             if (roll == 2) return EmotionType.Terrified;
-            if (roll == 3) return EmotionType.Sad;
+            if (roll == 3) return EmotionType.Happy;
+
             return EmotionType.Neutral;
         }
 

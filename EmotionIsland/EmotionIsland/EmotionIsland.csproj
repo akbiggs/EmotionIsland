@@ -99,6 +99,7 @@
     <Compile Include="EmotionIsland.cs" />
     <Compile Include="SlashAttack.cs" />
     <Compile Include="TextureBin.cs" />
+    <Compile Include="Treasure.cs" />
     <Compile Include="Villager.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>

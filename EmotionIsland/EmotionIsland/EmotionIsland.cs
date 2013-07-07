@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using EmotionIsland.Helpers;
 
 namespace EmotionIsland
 {
@@ -19,12 +20,13 @@ namespace EmotionIsland
         SpriteBatch spriteBatch;
 
         private World world;
+        public Color fadeColor = Color.Black;
+        private static Color nextFade;
+        private bool fadingTitle;
 
         public EmotionIsland()
         {
             graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferHeight = 720;
-            this.graphics.PreferredBackBufferWidth = 1280;
             Content.RootDirectory = "Content";
             Input.init();
         }
@@ -58,7 +60,8 @@ namespace EmotionIsland
 
             TextureBin.LoadContent(Content);
 
-            this.world = new World();
+            FadeTo(Color.Transparent);
+            this.ShouldDrawTitle = true;
         }
 
         /// <summary>
@@ -81,14 +84,23 @@ namespace EmotionIsland
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            if (fadingTitle && this.fadeColor == Color.Black)
+            {
+                this.ShouldDrawTitle = false;
+                FadeTo(Color.Transparent);
+            }
             if (Input.KeyPressed(Keys.Q))
                 world.GenerateWorld();
-
+            if (nextFade != this.fadeColor)
+            {
+                this.fadeColor = this.fadeColor.PushTowards(nextFade, 2);
+            }
             Input.Update();
 
-            this.world.Update();
+            if (this.fadingTitle)
+                this.world.Update();
 
-            if (this.world.PartyWiped && 
+            if (this.world != null && this.world.PartyWiped && 
                 (Input.gps[(int)PlayerIndex.One].Buttons.Start == ButtonState.Pressed ||
                 Input.gps[(int)PlayerIndex.Two].Buttons.Start == ButtonState.Pressed ||
                 Input.gps[(int)PlayerIndex.Three].Buttons.Start == ButtonState.Pressed ||
@@ -96,7 +108,16 @@ namespace EmotionIsland
             {
                 this.world = new World();
             }
-
+            if (this.ShouldDrawTitle && 
+                (Input.gps[(int)PlayerIndex.One].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Two].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Three].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Four].Buttons.Start == ButtonState.Pressed))
+            {
+                this.fadingTitle = true;
+                this.world = new World();
+                FadeTo(Color.Black);
+            }
             base.Update(gameTime);
         }
 
@@ -106,11 +127,31 @@ namespace EmotionIsland
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            world.Draw(spriteBatch);
+            if (!this.ShouldDrawTitle)
+            {
+                world.Draw(spriteBatch);
+            }
+            else
+            {
+                spriteBatch.Begin();
+                spriteBatch.Draw(TextureBin.Get("title"), new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                spriteBatch.End();
+            }
 
+            spriteBatch.Begin();
+            spriteBatch.Draw(TextureBin.Pixel, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), this.fadeColor);
+            spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        protected bool ShouldDrawTitle { get; set; }
+
+        public static void FadeTo(Color newColor)
+        {
+            EmotionIsland.nextFade = newColor;
+        }
+
     }
 }
