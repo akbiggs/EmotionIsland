@@ -9,10 +9,24 @@ namespace EmotionIsland
 {
     public class Player : LivingObject
     {
-        const int START_HEALTH = 300;
+        const int START_HEALTH = 3;
+
+        public override bool IsSolid
+        {
+            get { return true; }
+        }
 
         private string lastDirection;
 
+        public override FacingDirection FacingDirection
+        {
+            get
+            {
+                return this.lastDirection.EndsWith("lower") || this.lastDirection.EndsWith("upper")
+                           ? FacingDirection.Left
+                           : base.FacingDirection;
+            }
+        }
         public EmotionBeam Beam { get; set; }
 
         private EmotionType etype;
@@ -72,8 +86,18 @@ namespace EmotionIsland
                     new AnimationSet("walk_side", TextureBin.Get(spritesheetName), 6, 32, 32, FrameDuration, 7, true, 7*4+1),
                 };
 
+            this.GunTexture = TextureBin.Get("guns");
+            this.GunSourceRect = new Rectangle(0, 32, 32, 32);
+
             lastDirection = "upper";
             this.ChangeAnimation("walk_upper");
+        }
+
+        protected Rectangle GunSourceRect { get; set; }
+
+        protected Texture2D GunTexture
+        {
+            get; set; 
         }
 
         public override void Update()
@@ -82,14 +106,14 @@ namespace EmotionIsland
             
             if (this.Beam != null)
             {
-                this.Beam.BasePosition = this.Position;
+                this.Beam.BasePosition = this.Center + this.GetBeamOffset();
             }
 
             this.HandleMovement();
 
             if (Input.IsKeyDown(this.keyBindings.Fire))
             {
-                this.FireWeaponAt(Input.MousePosition);
+                this.FireWeaponAt(this.Position + this.GetLastMovementDirection() * 50);
             }
             else if (this.Beam != null)
             {
@@ -103,7 +127,7 @@ namespace EmotionIsland
             direction.Normalize();
             if (this.Beam == null)
             {
-                EmotionBeam beam = new EmotionBeam(World, this.Position, direction, EmotionType, this);
+                EmotionBeam beam = new EmotionBeam(World, this.Center + this.GetBeamOffset(), direction, EmotionType, this);
                 this.Beam = beam;
                 this.World.Add(this.Beam);
             }
@@ -112,6 +136,11 @@ namespace EmotionIsland
                 this.Beam.Direction = direction;
             }
             this.Beam.Stopped = false;
+        }
+
+        private Vector2 GetBeamOffset()
+        {
+            return -(new Vector2(6)) +this.GetLastMovementDirection()*20;
         }
 
         private void HandleMovement()
@@ -173,6 +202,106 @@ namespace EmotionIsland
             }
         }
 
+        public override void Draw(SpriteBatch spr)
+        {
+            if (lastDirection.Contains("upper"))
+            {
+                this.DrawGun(spr);
+                base.Draw(spr);
+            }
+            else
+            {
+                base.Draw(spr);
+                this.DrawGun(spr);
+            }
+
+            Vector2 startHealthPos = this.Center - new Vector2(6) - new Vector2(20, 20);
+            for (int i = 0; i < Health; i++)
+            {
+                spr.Draw(TextureBin.Get("heart"), startHealthPos + new Vector2(i*20, 0), null, Color.Red, 0, Vector2.Zero,
+                    1, SpriteEffects.None, 0);
+            }
+        }
+
+        private void DrawGun(SpriteBatch spr)
+        {
+            spr.Draw(GunTexture, this.Center, GunSourceRect, Color.White, 
+                FacingDirection == FacingDirection.Right ? -GetGunRotation() : this.GetGunRotation(), GetGunPosition(), 1,
+                FacingDirection == FacingDirection.Right ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+        }
+
+        private Vector2 GetGunPosition()
+        {
+            if (this.lastDirection.Contains("upperdiag"))
+            {
+
+            }
+            else if (this.lastDirection.Contains("upper"))
+            {
+                return new Vector2(this.GunTexture.Width/(1.35f), 16);
+            }
+            else if (this.lastDirection.Contains("lowerdiag"))
+            {
+                //return -MathHelper.PiOver4;
+            }
+
+            if (this.lastDirection.Contains("lower"))
+            {
+                //return -MathHelper.PiOver2;
+            }
+
+            return new Vector2(this.GunTexture.Width/(1.9f), 12);
+        }
+
+        public Vector2 GetLastMovementDirection()
+        {
+            if (this.lastDirection.Contains("upperdiag"))
+            {
+                return new Vector2(1* (int)this.FacingDirection, -1);
+            }
+            else if (this.lastDirection.Contains("upper"))
+            {
+                return new Vector2(0* (int)this.FacingDirection, -1);
+                return new Vector2(0, 1) * (int)this.FacingDirection;
+            }
+            else if (this.lastDirection.Contains("lowerdiag"))
+            {
+                return new Vector2(1* (int)this.FacingDirection, 1);
+                return new Vector2(1, -1) * (int)this.FacingDirection;
+                //return -MathHelper.PiOver4;
+            }
+
+            if (this.lastDirection.Contains("lower"))
+            {
+                return new Vector2(0, 1);
+            }
+
+            return new Vector2((float)this.FacingDirection, 0);
+        }
+
+        private float GetGunRotation()
+        {
+            if (this.lastDirection.Contains("upperdiag"))
+            {
+                return MathHelper.PiOver4;
+            }
+            else if (this.lastDirection.Contains("upper"))
+            {
+                return MathHelper.PiOver2;
+            }
+            else if (this.lastDirection.Contains("lowerdiag"))
+            {
+                return -MathHelper.PiOver4;
+            }
+
+            if (this.lastDirection.Contains("lower"))
+            {
+                return -MathHelper.PiOver2;
+            }
+
+            return 0;
+        }
+
         #region Collisions
         public override void OnCollide(GameObject obj)
         {
@@ -180,11 +309,12 @@ namespace EmotionIsland
             {
                 this.SubTypeCollide((SlashAttack)obj);
             }
+            base.OnCollide(obj);
         }
 
         private void SubTypeCollide(SlashAttack attack)
         {
-            this.TakeDamage(1, attack.Direction);
+            this.TakeDamage(attack.Owner.Damage, attack.Direction);
         }
 
         #endregion

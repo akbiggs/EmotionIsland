@@ -88,7 +88,7 @@ namespace EmotionIsland
         public override void Draw(SpriteBatch spr)
         {
             // apply a flashing effect when damaged
-            if (!(this.IsInvulnerable && this.invulnerableTimer%2 == 0))
+            //if (!(this.IsInvulnerable && this.invulnerableTimer%2 == 0))
                 base.Draw(spr);
         }
 

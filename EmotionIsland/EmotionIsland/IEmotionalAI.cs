@@ -15,7 +15,12 @@ namespace EmotionIsland
         void Excite(GameObject source);
         void Depress(GameObject source);
 
+        void AngryUpdate();
+        void VigilantUpdate();
         void HappyUpdate();
+        void AdmirativeUpdate();
+        void AmazedUpdate();
+        void HatefulUpdate();
         void TerrifiedUpdate();
         void SadUpdate();
         void NeutralUpdate();

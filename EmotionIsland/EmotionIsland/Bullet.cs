@@ -20,6 +20,7 @@ namespace EmotionIsland
         public Bullet(World world, Vector2 spawnPosition, Vector2 size, Texture2D texture, GameObject owner, int lifespan, float speed, Vector2 direction) 
             : base(world, spawnPosition + direction*4, size, texture)
         {
+            direction.Normalize();
             this.Owner = owner;
             this.Lifespan = lifespan;
             this.Direction = direction;

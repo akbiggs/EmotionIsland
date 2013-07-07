@@ -5,7 +5,7 @@ namespace EmotionIsland
 {
     public class EmotionBeam
     {
-        private const int PARTICLE_DELAY = 5;
+        private const int PARTICLE_DELAY = 10;
 
         public bool Stopped { get { return this.stopped; } set
         {

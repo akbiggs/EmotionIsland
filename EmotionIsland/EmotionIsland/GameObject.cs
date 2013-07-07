@@ -2,16 +2,30 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using EmotionIsland.Helpers;
 
 namespace EmotionIsland
 {
     public class GameObject
     {
+        public virtual bool IsSolid { get { return false; } }
+
+        public virtual float Rotation { get { return 0; } }
+
+        public virtual int Damage { get { return 1; } }
         public World World { get; protected set; }
         public bool PreventVelocityChanges { get { return this.velocityDoNotChangeTimer > 0; } }
 
-        public FacingDirection FacingDirection {
-            get { return lastMovement.X < 0 ? FacingDirection.Left : FacingDirection.Right; }
+        private FacingDirection facingDirection = FacingDirection.None;
+        public virtual FacingDirection FacingDirection {
+            get
+            {
+                if (facingDirection == FacingDirection.None)
+                    return lastMovement.X < 0 ? FacingDirection.Left : FacingDirection.Right;
+                else
+                    return facingDirection;
+            }
+            set { facingDirection = value; }
         }
         
         Vector2 lastMovement = new Vector2();
@@ -19,7 +33,7 @@ namespace EmotionIsland
         public int FrameDuration { get; set; }
 
         public List<AnimationSet> Animations = new List<AnimationSet>();
-        private AnimationSet curAnimation;
+        public AnimationSet CurAnimation;
         private int velocityDoNotChangeTimer;
 
         public virtual bool ShouldRemove { get { return !this.IsAlive; } }
@@ -52,6 +66,7 @@ namespace EmotionIsland
 
         public GameObject(World world, Vector2 position, Vector2 size, Texture2D texture)
         {
+            this.Scale = Vector2.One;
             this.World = world;
             this.Position = position;
             this.Size = size;
@@ -73,6 +88,28 @@ namespace EmotionIsland
 
         public virtual void OnCollide(GameObject gameObject)
         {
+            if (gameObject.IsSolid)
+            {
+                Rectangle intersection = Rectangle.Intersect(this.BBox, gameObject.BBox);
+                if (intersection.Width > intersection.Height)
+                {
+                    if (this.Center.X < gameObject.Center.X)
+                        this.Position = new Vector2(this.Position.X - (intersection.Width + 1), this.Position.Y);
+                    else
+                        this.Position = new Vector2(this.Position.X + (intersection.Width + 1), this.Position.Y);
+
+                    this.HandleCollision(gameObject);
+                }
+                else
+                {
+
+                    if (this.Center.Y < gameObject.Center.Y)
+                        this.Position = new Vector2(this.Position.X, this.Position.Y - (intersection.Height + 1));
+                    else
+                        this.Position = new Vector2(this.Position.X, this.Position.Y + (intersection.Height + 1));
+                    this.HandleCollision(gameObject);
+                }
+            }
         }
 
         public virtual void Update()
@@ -86,10 +123,14 @@ namespace EmotionIsland
                 if (this.PreventVelocityChanges)
                 {
                     this.velocityDoNotChangeTimer--;
+                    if (this.velocityDoNotChangeTimer == 0)
+                    {
+                        this.Velocity = Vector2.Zero;
+                    } 
                 }
-                if (this.curAnimation != null)
+                if (this.CurAnimation != null)
                 {
-                    this.curAnimation.Update();
+                    this.CurAnimation.Update();
                 }
 
                 if (this.Velocity.X != 0)
@@ -98,7 +139,6 @@ namespace EmotionIsland
                 }
 
                 Vector2 originalLocation = Position;
-
 
                 int tileX = 0;
                 int tileY = 0;
@@ -147,14 +187,16 @@ namespace EmotionIsland
 
         public virtual void Draw(SpriteBatch spr)
         {
-            Texture2D tex = this.curAnimation != null ? this.curAnimation.GetTexture() : this.Texture;
-            Rectangle? sourceRectangle = this.curAnimation != null ? this.curAnimation.GetFrameRect() : (Rectangle?) null;
+            Texture2D tex = this.CurAnimation != null ? this.CurAnimation.GetTexture() : this.Texture;
+            Rectangle? sourceRectangle = this.CurAnimation != null ? this.CurAnimation.GetFrameRect() : (Rectangle?) null;
 
-            spr.Draw(tex, this.Position, sourceRectangle, this.Color, 0, Vector2.Zero, 
-                this.curAnimation == null ? this.Size : Vector2.One,
+            spr.Draw(tex, this.Position, sourceRectangle, this.Color, this.Rotation, Vector2.Zero, 
+                this.CurAnimation == null ? this.Size : this.Scale,
                 FacingDirection == FacingDirection.Right ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 
                 0);
         }
+
+        public virtual Vector2 Scale { get; set; }
 
         /// <summary>
         ///     Changes the animation being played. Doesn't do anything if called with the name of the currently
@@ -162,16 +204,16 @@ namespace EmotionIsland
         /// </summary>
         /// <param name="name">The name of the new animation.</param>
         /// <exception cref="System.InvalidOperationException">Specified animation doesn't exist.</exception>
-        protected virtual void ChangeAnimation(string name)
+        public virtual void ChangeAnimation(string name)
         {
-            if (curAnimation == null || !curAnimation.IsCalled(name))
+            if (CurAnimation == null || !CurAnimation.IsCalled(name))
             {
                 AnimationSet newAnimation = GetAnimationByName(name);
                 if (newAnimation == null)
                     throw new InvalidOperationException("Specified animation doesn't exist.");
                 newAnimation.Reset();
                 newAnimation.Update();
-                curAnimation = newAnimation;
+                CurAnimation = newAnimation;
             }
         }
 
