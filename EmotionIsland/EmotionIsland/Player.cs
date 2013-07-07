@@ -93,8 +93,7 @@ namespace EmotionIsland
             }
             else if (this.Beam != null)
             {
-                World.Remove(this.Beam);
-                this.Beam = null;
+                this.Beam.Stopped = true;
             }
         }
 
@@ -106,12 +105,13 @@ namespace EmotionIsland
             {
                 EmotionBeam beam = new EmotionBeam(World, this.Position, direction, EmotionType, this);
                 this.Beam = beam;
-                World.Add(this.Beam);
+                this.World.Add(this.Beam);
             }
             else
             {
                 this.Beam.Direction = direction;
             }
+            this.Beam.Stopped = false;
         }
 
         private void HandleMovement()
