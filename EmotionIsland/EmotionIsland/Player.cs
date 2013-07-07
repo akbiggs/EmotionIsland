@@ -11,6 +11,13 @@ namespace EmotionIsland
     {
         const int START_HEALTH = 3;
 
+        public static Dictionary<int, PlayerNumber> Nums = new Dictionary<int, PlayerNumber>
+            {
+                {1, PlayerNumber.One},
+                {2, PlayerNumber.Two},
+                {3, PlayerNumber.Three},
+                {4, PlayerNumber.Four}
+            };
         public override bool IsSolid
         {
             //get { return true; }
@@ -156,6 +163,7 @@ namespace EmotionIsland
                 this.Beam.Direction = direction;
             }
             this.Beam.Stopped = false;
+            TextureBin.PlaySound("shoot01");
         }
 
         private Vector2 GetBeamOffset()
@@ -244,7 +252,7 @@ namespace EmotionIsland
 
         private void DrawGun(SpriteBatch spr)
         {
-            spr.Draw(GunTexture, this.Center, GunSourceRect, Color.White, 
+            spr.Draw(GunTexture, this.Center, GunSourceRect, this.Color, 
                 FacingDirection == FacingDirection.Right ? -GetGunRotation() : this.GetGunRotation(), GetGunPosition(), 1,
                 FacingDirection == FacingDirection.Right ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
         }
