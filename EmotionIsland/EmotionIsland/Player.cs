@@ -168,19 +168,19 @@ namespace EmotionIsland
             this.Velocity = Vector2.Zero;
 
             const int moveSpeed = 3;
-            if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.Y > .5)
+            if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.Y > .25)
             {
                 this.Velocity = new Vector2(this.Velocity.X, -moveSpeed);
             }
-            else if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.Y < -.5)
+            else if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.Y < -.25)
             {
                 this.Velocity = new Vector2(this.Velocity.X, moveSpeed);
             }
-            if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.X < -.5)
+            if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.X < -.25)
             {
                 this.Velocity = new Vector2(-moveSpeed, this.Velocity.Y);
             }
-            else if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.X > .5)
+            else if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.X > .25)
             {
                 this.Velocity = new Vector2(moveSpeed, this.Velocity.Y);
             }
