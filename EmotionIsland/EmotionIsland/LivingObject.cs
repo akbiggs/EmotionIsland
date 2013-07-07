@@ -80,8 +80,12 @@ namespace EmotionIsland
             this.invulnerableTimer = 100;
         }
 
-        public void Die()
+        public virtual void Die()
         {
+            for (int i = 0; i < MathExtra.RandomInt(5, 10); i++)
+            {
+                World.Add(new Bullet(this.World, this.Position, new Vector2(MathExtra.RandomInt(12, 16)), TextureBin.Pixel, null, 50, MathExtra.RandomFloat()*2 + 2, new Vector2(MathExtra.RandomFloat() * (MathExtra.RandomBool() ? -1 : 1), MathExtra.RandomFloat() * (MathExtra.RandomBool() ? -1 : 1))));
+            }
             this.World.Remove(this);
         }
 

@@ -138,7 +138,7 @@ namespace EmotionIsland
         public override void Update()
         {
             Player player = this.FindClosestPlayer();
-            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 10000000)
+            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 100000)
             {
                 World.Remove(this);
             }

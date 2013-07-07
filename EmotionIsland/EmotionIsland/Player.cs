@@ -125,7 +125,7 @@ namespace EmotionIsland
 
             this.HandleMovement();
 
-            if (Input.PressedX(this.PlayerIndex))
+            if (Input.gps[(int)PlayerIndex].Buttons.X == ButtonState.Pressed)
             {
                 this.FireWeaponAt(this.Position + this.GetLastMovementDirection() * 50);
             }
@@ -133,6 +133,12 @@ namespace EmotionIsland
             {
                 this.Beam.Stopped = true;
             }
+        }
+
+        public override void Die()
+        {
+            TextureBin.PlaySound("death01");
+            base.Die();
         }
 
         private void FireWeaponAt(Vector2 targetPosition)
@@ -231,7 +237,7 @@ namespace EmotionIsland
             Vector2 startHealthPos = this.Center - new Vector2(6) - new Vector2(20, 20);
             for (int i = 0; i < Health; i++)
             {
-                spr.Draw(TextureBin.Get("heart"), startHealthPos + new Vector2(i*20, 0), null, Color.Red, 0, Vector2.Zero,
+                spr.Draw(TextureBin.Get("heart"), startHealthPos + new Vector2(i*20, 0), null, this.Color, 0, Vector2.Zero,
                     1, SpriteEffects.None, 0);
             }
         }
