@@ -12,11 +12,12 @@ namespace EmotionIsland
         Vector2 origin;
 
         public BeamParticle(World world, EmotionBeam owner, EmotionType type, Vector2 position, Vector2 direction) 
-            : base(world, position, new Vector2(12, 12), TextureBin.Pixel, direction * 8, -1)
+            : base(world, position, new Vector2(1), TextureBin.Pixel, direction * 8, -1)
         {
             origin = position;
             this.OwnerBeam = owner;
             this.EmotionType = type;
+            this.Texture = TextureBin.Get("beam0" + (int) owner.Owner.PlayerNumber);
         }
 
         public override void Update()

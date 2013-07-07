@@ -9,8 +9,7 @@ namespace EmotionIsland
 {
     public class Player : LivingObject
     {
-        const int START_HEALTH = 3;
-
+        private const int START_HEALTH = 3;
         public static Dictionary<int, PlayerNumber> Nums = new Dictionary<int, PlayerNumber>
             {
                 {1, PlayerNumber.One},

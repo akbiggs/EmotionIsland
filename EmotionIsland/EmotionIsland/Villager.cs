@@ -294,7 +294,7 @@ namespace EmotionIsland
         public override void NeutralUpdate()
         {
             ++wanderTimer;
-            if (wanderTimer > 60)
+            if (wanderTimer > 1)
             {
                 this.WanderDirection = this.PickRandomDirection();
                 this.wanderTimer = 0;
