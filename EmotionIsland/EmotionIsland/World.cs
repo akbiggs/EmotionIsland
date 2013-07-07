@@ -3,6 +3,7 @@ using EmotionIsland.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace EmotionIsland
 {
@@ -54,6 +55,8 @@ namespace EmotionIsland
         private Random rand;
         private int spawnTime = 500;
 
+        List<Vector2> villages;
+
         public World()
         {
             rand = new Random();
@@ -61,6 +64,7 @@ namespace EmotionIsland
 
             drawTemp = false;
             GenerateWorld();
+
 
             //this.villagers.Add(new Villager(this, new Vector2(200, 80), EmotionType.Angry));
             this.villagers.Add(new Villager(this, new Vector2(200, 120), EmotionType.Sad));
@@ -500,9 +504,77 @@ namespace EmotionIsland
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Mountain))
                     {
-                        tiles[tile] = 47;
+                        int floorTile = rand.Next(0, 3);
+                        if (floorTile == 0)
+                        {
+                            tiles[tile] = 47;
+                        }
+                        else if (floorTile == 1)
+                        {
+                            tiles[tile] = 9;
+                        }
+                        else if (floorTile == 2)
+                        {
+                            tiles[tile] = 19;
+                        }
                     }
                 }
+            }
+
+            //Create villages
+            villages = new List<Vector2>();
+            int numVillages = rand.Next(2, 5);
+            for (int village = 0; village < numVillages; village++)
+            {
+                Vector2 origin = new Vector2(0, 0);
+                while (!checkTile((int)origin.X, (int)origin.Y, (int)BaseTiles.Grass)
+                    && !checkTile((int)origin.X, (int)origin.Y+5, (int)BaseTiles.Grass)
+                    && !checkTile((int)origin.X + 5, (int)origin.Y, (int)BaseTiles.Grass)
+                    && !checkTile((int)origin.X + 5, (int)origin.Y + 5, (int)BaseTiles.Grass))
+                {
+                    origin.X = rand.Next(0, width);
+                    origin.Y = rand.Next(0, height);
+                }
+                villages.Add(origin);
+
+                int numHouses = rand.Next(3, 5);
+
+                int posx = (int)origin.X;
+                int posy = (int)origin.Y;
+                for (int house = 0; house < numHouses; house++)
+                {
+                    if (checkTile(posx, posy, (int)BaseTiles.Grass) &&
+                            checkTile(posx, posy + 1, (int)BaseTiles.Grass) &&
+                            checkTile(posx, posy - 1, (int)BaseTiles.Grass) &&
+                            checkTile(posx + 1, posy, (int)BaseTiles.Grass) &&
+                            checkTile(posx - 1, posy, (int)BaseTiles.Grass) &&
+                            checkTile(posx+ 1, posy+ 1, (int)BaseTiles.Grass) &&
+                            checkTile(posx- 1, posy- 1, (int)BaseTiles.Grass))
+                    {
+                        players[0].Position = new Vector2(villages[0].X*32, villages[0].Y*32);
+                        int tile = posx + posy * width;
+
+                        int houseType = rand.Next(0, 3);
+                        tiles[tile] = 74 + houseType * 2;
+                        tiles[tile + width] = 84 + houseType * 2;
+                        tiles[tile + 1] = 75 + houseType * 2;
+                        tiles[tile + width + 1] = 85 + houseType*2;
+
+                        tempTiles[tile] = (int)BaseTiles.Doodad;
+                        tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                        tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+                        tempTiles[tile + width + 1] = (int)BaseTiles.Doodad;
+                        collisionMap[tile] = (int)BlockTiles.All;
+                        collisionMap[tile + 1] = (int)BlockTiles.All;
+                        collisionMap[tile + width] = (int)BlockTiles.All;
+                        collisionMap[tile + 1 + width] = (int)BlockTiles.All;
+
+                        posx += 3 + rand.Next(0, 2);
+                        posy += rand.Next(-3, 3);
+
+                    }
+                }
+
             }
 
             //Populate doodads
@@ -542,8 +614,6 @@ namespace EmotionIsland
                         {
                             tiles[tile] = 34;
                             tiles[tile + 1] = 35;
-                            collisionMap[tile] = (int)BlockTiles.All;
-                            collisionMap[tile + 1] = (int)BlockTiles.All;
                             tempTiles[tile + 1] = (int)BaseTiles.Doodad;
                         }
                         else if (doodadType >= 5)
@@ -559,6 +629,57 @@ namespace EmotionIsland
                         tempTiles[tile] = (int)BaseTiles.Doodad;
                         
                     }
+
+                    if (checkTile(c, r, (int)BaseTiles.Sand) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Sand) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Sand) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Sand) &&
+                        checkTile(c - 1, r - 1, (int)BaseTiles.Sand) && rand.Next(0, 4) == 0)
+                    {
+                        if (rand.Next(0, 5) == 0)
+                        {
+                            tiles[tile] = 54;
+                            tiles[tile + width] = 64;
+                            tiles[tile + 1] = 55;
+                            tiles[tile + width + 1] = 65;
+
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width + 1] = (int)BaseTiles.Doodad;
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile+1] = (int)BlockTiles.All;
+                            collisionMap[tile+width] = (int)BlockTiles.All;
+                            collisionMap[tile+1+width] = (int)BlockTiles.All;
+                        }
+                    }
+
+                    if (checkTile(c, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c - 1, r - 1, (int)BaseTiles.Mountain) && rand.Next(0, 12) == 0)
+                    {
+                        tiles[tile] = 105;
+                        tiles[tile + width] = 115;
+                        tiles[tile + 1] = 106;
+                        tiles[tile + width + 1] = 116;
+
+                        tempTiles[tile] = (int)BaseTiles.Doodad;
+                        tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                        tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+                        tempTiles[tile + width + 1] = (int)BaseTiles.Doodad;
+                        collisionMap[tile] = (int)BlockTiles.All;
+                        collisionMap[tile + 1] = (int)BlockTiles.All;
+                        collisionMap[tile + width] = (int)BlockTiles.All;
+                        collisionMap[tile + 1 + width] = (int)BlockTiles.All;
+                    }
+
+
                 }
             }
 
@@ -871,9 +992,9 @@ namespace EmotionIsland
                     yPos = 0;
                 if (xPos < 0)
                     xPos = 0;
-                for (int r = yPos; r < yPos + 70*(1.5f); r++)
+                for (int r = yPos; r < yPos + 70*(1.5f) && r < height; r++)
                 {
-                    for (int c = xPos; c < xPos + 80*(1.5f); c++)
+                    for (int c = xPos; c < xPos + 80 * (1.5f) && c < width; c++)
                     {
                         if (tiles[r * width + c] >= 20 && tiles[r * width + c]%10 == 0)
                         {
