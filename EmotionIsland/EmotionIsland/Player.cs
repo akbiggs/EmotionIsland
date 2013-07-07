@@ -68,6 +68,7 @@ namespace EmotionIsland
         public PlayerNumber PlayerNumber { get; private set; }
 
         private PlayerKeyBindings keyBindings;
+        private int playFireTimer;
 
         public Player(World world, Vector2 pos, PlayerNumber pn) : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, START_HEALTH)
         {
@@ -124,7 +125,8 @@ namespace EmotionIsland
         public override void Update()
         {
             base.Update();
-            
+            if (this.playFireTimer > 0)
+                this.playFireTimer--;
             if (this.Beam != null)
             {
                 this.Beam.BasePosition = this.Center + this.GetBeamOffset();
@@ -163,7 +165,11 @@ namespace EmotionIsland
                 this.Beam.Direction = direction;
             }
             this.Beam.Stopped = false;
-            TextureBin.PlaySound("shoot01");
+            if (this.playFireTimer == 0)
+            {
+                TextureBin.PlaySound("shoot01");
+                this.playFireTimer = 8;
+            }
         }
 
         private Vector2 GetBeamOffset()
