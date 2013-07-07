@@ -389,7 +389,15 @@ namespace EmotionIsland
                             collisionMap[tile - 1] = (int)BlockTiles.Left;
                         }
                         else
-                            tiles[tile] = 3 + rand.Next(0, 3);//SAND
+                        {
+                            int randSand = rand.Next(0, 12);
+                            if (randSand < 10)
+                                tiles[tile] = 3 + rand.Next(0,3);//SAND
+                            else if (randSand == 10)
+                                tiles[tile] = 29;
+                            else if(randSand == 11)
+                                tiles[tile] = 39;
+                        }
                         
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Water))
@@ -587,6 +595,201 @@ namespace EmotionIsland
                 for (int c = 0; c < width; c++)
                 {
                     int tile = r * width + c;
+
+                    //Check for left grass ramps
+                    if(checkTile(c, r, (int)BaseTiles.Grass) && 
+                        checkTile(c, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Grass) &&
+                        checkTile(c, r+1, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Sand) &&
+                        checkTile(c - 1, r - 1, (int)BaseTiles.Sand) &&
+                        checkTile(c - 1, r + 2, (int)BaseTiles.Sand) && 
+                        checkTile(c - 1, r+1, (int)BaseTiles.Sand)){
+                            if (rand.Next(0, 3) == 0)
+                            {
+                                tiles[tile - 1] = 117;
+                                tiles[tile + width - 1] = 127;
+                                collisionMap[tile - 1] = (int)BlockTiles.Free;
+                                collisionMap[tile + width - 1] = (int)BlockTiles.Free;
+                                collisionMap[tile] = (int)BlockTiles.Free;
+                                collisionMap[tile + width] = (int)BlockTiles.Free;
+                                tempTiles[tile] = (int)BaseTiles.Doodad;
+                                tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                                tempTiles[tile - 1] = (int)BaseTiles.Doodad;
+                                tempTiles[tile + width - 1] = (int)BaseTiles.Doodad;
+                                continue;
+                            }
+
+                    }
+
+                    //Check for right grass ramps
+                    if (checkTile(c, r, (int)BaseTiles.Grass) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r - 1, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r + 2, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Sand))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile + 1] = 119;
+                            tiles[tile + width + 1] = 129;
+                            collisionMap[tile + 1] = (int)BlockTiles.Free;
+                            collisionMap[tile + width + 1] = (int)BlockTiles.Free;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile + width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width + 1] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Check for top grass ramps
+                    if (checkTile(c, r, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Grass) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Sand) &&
+                        checkTile(c - 1, r - 1, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r - 1, (int)BaseTiles.Sand) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Grass))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile - width] = 108;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile - width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile - width] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Check for bottom grass ramps
+                    if (checkTile(c, r, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Sand) &&
+                        checkTile(c-1, r + 1, (int)BaseTiles.Sand) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Sand) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Sand) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Grass))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile + width] = 128;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile + width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Check for left Mountain ramps
+                    if (checkTile(c, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r + 2, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r + 1, (int)BaseTiles.Grass))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile - 1] = 147;
+                            tiles[tile + width - 1] = 157;
+                            collisionMap[tile - 1] = (int)BlockTiles.Free;
+                            collisionMap[tile + width - 1] = (int)BlockTiles.Free;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile + width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                            tempTiles[tile - 1] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width - 1] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Check for right Mountain ramps
+                    if (checkTile(c, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r + 2, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Grass))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile + 1] = 149;
+                            tiles[tile + width + 1] = 159;
+                            collisionMap[tile + 1] = (int)BlockTiles.Free;
+                            collisionMap[tile + width + 1] = (int)BlockTiles.Free;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile + width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width + 1] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Check for top Mountain ramps
+                    if (checkTile(c, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r - 1, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Mountain))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile - width] = 138;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile - width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile - width] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Check for bottom Mountain ramps
+                    if (checkTile(c, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c - 1, r, (int)BaseTiles.Mountain) &&
+                        checkTile(c, r + 1, (int)BaseTiles.Grass) &&
+                        checkTile(c - 1, r + 1, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r + 1, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Grass) &&
+                        checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                    {
+                        if (rand.Next(0, 3) == 0)
+                        {
+                            tiles[tile + width] = 158;
+                            collisionMap[tile] = (int)BlockTiles.Free;
+                            collisionMap[tile + width] = (int)BlockTiles.Free;
+                            tempTiles[tile] = (int)BaseTiles.Doodad;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                            continue;
+                        }
+
+                    }
+
+                    //Do grass doodads
                     if (checkTile(c, r, (int)BaseTiles.Grass) && 
                         checkTile(c, r+1, (int)BaseTiles.Grass) && 
                         checkTile(c, r-1, (int)BaseTiles.Grass) && 
