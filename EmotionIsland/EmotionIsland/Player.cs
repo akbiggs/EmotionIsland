@@ -184,7 +184,7 @@ namespace EmotionIsland
 
         private void SubTypeCollide(SlashAttack attack)
         {
-            this.TakeDamage(1);
+            this.TakeDamage(1, attack.Direction);
         }
 
         #endregion

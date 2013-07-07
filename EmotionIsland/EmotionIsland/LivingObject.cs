@@ -7,7 +7,8 @@ namespace EmotionIsland
     {
         private int invulnerableTimer = 0;
         private int healTimer = 0;
-        
+
+        private const float KNOCKBACK_SPEED = 3;
 
         public bool ShouldHeal
         {
@@ -49,6 +50,12 @@ namespace EmotionIsland
 
         public void TakeDamage(int amount)
         {
+            this.TakeDamage(amount, Vector2.Zero);
+        }
+
+        public void TakeDamage(int amount, Vector2 direction)
+        {
+            direction.Normalize();
             if (!this.IsInvulnerable)
             {
                 this.Health -= amount;
@@ -56,6 +63,14 @@ namespace EmotionIsland
                 if (this.Health <= 0)
                 {
                     this.Die();
+                }
+                else
+                {
+                    if (direction != Vector2.Zero)
+                    {
+                        this.Velocity = direction*KNOCKBACK_SPEED;
+                    }
+                    this.PreventMovement(50);
                 }
             }
         }

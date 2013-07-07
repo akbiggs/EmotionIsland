@@ -30,6 +30,7 @@ namespace EmotionIsland
 
         private BufferedList<Player> players = new BufferedList<Player>();
         private BufferedList<Villager> villagers = new BufferedList<Villager>();
+        public BufferedList<Villager> Villagers { get { return villagers; } }
 
         private BufferedList<EmotionBeam> emotionBeams = new BufferedList<EmotionBeam>();
         private BufferedList<Bullet> bullets = new BufferedList<Bullet>();

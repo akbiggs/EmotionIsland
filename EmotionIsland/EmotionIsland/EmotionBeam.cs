@@ -6,6 +6,9 @@ namespace EmotionIsland
     public class EmotionBeam
     {
         private const int PARTICLE_DELAY = 5;
+
+        public bool Stopped { get; set; }
+
         public BufferedList<BeamParticle> Particles = new BufferedList<BeamParticle>();
 
         public World World { get; set; }

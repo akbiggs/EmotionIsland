@@ -20,6 +20,12 @@ namespace EmotionIsland
         }
 
         private int wanderOffset = 100;
+        private int attackCoolDownTimer;
+
+        protected bool CanAttack
+        {
+            get { return this.attackCoolDownTimer == 0; }
+        }
 
         public override Color Color { get { return this.Emotion.ToColor(); } }
 
@@ -28,6 +34,14 @@ namespace EmotionIsland
         {
         }
 
+        public override void Update()
+        {
+            if (!this.CanAttack)
+            {
+                this.attackCoolDownTimer--;
+            }
+            base.Update();
+        }
         #region AI
 
         public override void HappyUpdate()
@@ -69,8 +83,13 @@ namespace EmotionIsland
 
         private void Attack(GameObject target)
         {
-            this.World.Add(new SlashAttack(this.World, this.Position, this, target.Position - this.Position));
+            if (this.CanAttack)
+            {
+                this.World.Add(new SlashAttack(this.World, this.Position, this, target.Position - this.Position));
+                this.attackCoolDownTimer = 30;
+            }
         }
+
 
         public override void TerrifiedUpdate()
         {
@@ -100,7 +119,34 @@ namespace EmotionIsland
                 this.wanderTimer = 0;
                 this.WanderDirection = this.PickRandomDirection();
             }
-            base.OnEmotionChanged(source);
+            else if (this.EmotionType == EmotionType.Angry)
+            {
+                this.EmotionalTarget = this.FindClosestVillager();
+            }
+            else
+            {
+                base.OnEmotionChanged(source);
+            }
+        }
+
+        private Villager FindClosestVillager()
+        {
+            float closestDistanceSquared = 10000000;
+            Villager closestVillager = null;
+
+            foreach (var villager in this.World.Villagers)
+            {
+                if (villager != this)
+                {
+                    float distanceSquared = Vector2.DistanceSquared(this.Position, villager.Position);
+                    if (distanceSquared < closestDistanceSquared)
+                    {
+                        closestDistanceSquared = distanceSquared;
+                        closestVillager = villager;
+                    }
+                }
+            }
+            return closestVillager;
         }
 
         private Vector2 PickRandomDirection()
@@ -138,6 +184,14 @@ namespace EmotionIsland
             {
                 BeamParticle particle = (BeamParticle) gameObject;
                 this.InfectWithEmotion(particle.EmotionType, particle.OwnerBeam.Owner);
+            }
+            else if (gameObject is SlashAttack)
+            {
+                SlashAttack attack = ((SlashAttack) gameObject);
+                if (attack.Owner != this)
+                {
+                    this.TakeDamage(1, attack.Direction);
+                }
             }
             base.OnCollide(gameObject);
         }

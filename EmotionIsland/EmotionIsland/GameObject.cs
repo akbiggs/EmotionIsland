@@ -8,6 +8,7 @@ namespace EmotionIsland
     public class GameObject
     {
         public World World { get; protected set; }
+        public bool PreventVelocityChanges { get { return this.velocityDoNotChangeTimer > 0; } }
 
         public FacingDirection FacingDirection {
             get { return lastMovement.X < 0 ? FacingDirection.Left : FacingDirection.Right; }
@@ -19,6 +20,7 @@ namespace EmotionIsland
 
         public List<AnimationSet> Animations = new List<AnimationSet>();
         private AnimationSet curAnimation;
+        private int velocityDoNotChangeTimer;
 
         public virtual bool ShouldRemove { get { return !this.IsAlive; } }
         public virtual bool IsAlive { get; set; }
@@ -41,7 +43,8 @@ namespace EmotionIsland
         public Vector2 Top { get { return this.Position + new Vector2(this.Size.X/2, 0); } }
         public Vector2 Bottom { get { return this.Position + new Vector2(this.Size.X/2, this.Size.Y); } }
 
-        public Vector2 Velocity { get; set; }
+        private Vector2 velocity;
+        public Vector2 Velocity { get { return velocity; } set { if (!this.PreventVelocityChanges) velocity = value; } }
 
         public Vector2 Size { get; set; }
         public Texture2D Texture { get; protected set; }
@@ -80,6 +83,10 @@ namespace EmotionIsland
             }
             else
             {
+                if (this.PreventVelocityChanges)
+                {
+                    this.velocityDoNotChangeTimer--;
+                }
                 if (this.curAnimation != null)
                 {
                     this.curAnimation.Update();
@@ -127,6 +134,11 @@ namespace EmotionIsland
         private AnimationSet GetAnimationByName(string name)
         {
             return Animations.Find(animset => animset.IsCalled(name));
+        }
+
+        public void PreventMovement(int time)
+        {
+            this.velocityDoNotChangeTimer = time;
         }
     }
 }
