@@ -160,62 +160,76 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Sounds\blip01.wav">
+    <Compile Include="Sounds\blip01.wav">
       <Name>blip01</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\blip02.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\blip02.wav">
       <Name>blip02</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\blip03.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\blip03.wav">
       <Name>blip03</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\death01.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\death01.wav">
       <Name>death01</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\death02.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\death02.wav">
       <Name>death02</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\fastpew01.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\fastpew01.wav">
       <Name>fastpew01</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\fastpew02.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\fastpew02.wav">
       <Name>fastpew02</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\fastpew03.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\fastpew03.wav">
       <Name>fastpew03</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\hit01.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\hit01.wav">
       <Name>hit01</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\hit02.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\hit02.wav">
       <Name>hit02</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\hit03.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\hit03.wav">
       <Name>hit03</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\shoot01.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\shoot01.wav">
       <Name>shoot01</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\shoot02.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\shoot02.wav">
       <Name>shoot02</Name>
       <Importer>WavImporter</Importer>
-    </Content>
-    <Content Include="Sounds\shoot03.wav">
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Sounds\shoot03.wav">
       <Name>shoot03</Name>
       <Importer>WavImporter</Importer>
-    </Content>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
