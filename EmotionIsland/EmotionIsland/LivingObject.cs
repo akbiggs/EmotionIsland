@@ -8,6 +8,8 @@ namespace EmotionIsland
         private int invulnerableTimer = 0;
         private int healTimer = 0;
 
+        public int MaxHealth { get; set; }
+
         private const float KNOCKBACK_SPEED = 3;
 
         public bool ShouldHeal
@@ -37,6 +39,7 @@ namespace EmotionIsland
             : base(world, pos, size, tex)
         {
             this.Health = health;
+            this.MaxHealth = health + 2;
         }
 
         public override void Update()

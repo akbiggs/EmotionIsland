@@ -244,22 +244,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="beam01.png">
+    <Compile Include="Textures\beam01.png">
       <Name>beam01</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="beam02.png">
+    <Compile Include="Textures\beam02.png">
       <Name>beam02</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="beam03.png">
+    <Compile Include="Textures\beam03.png">
       <Name>beam03</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="beam04.png">
+    <Compile Include="Textures\beam04.png">
       <Name>beam04</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
