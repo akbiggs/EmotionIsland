@@ -13,7 +13,8 @@ namespace EmotionIsland
 
         public override bool IsSolid
         {
-            get { return true; }
+            //get { return true; }
+            get { return false; }
         }
 
         private string lastDirection;
@@ -37,6 +38,18 @@ namespace EmotionIsland
             get { return this.Health <= 0; }
         }
 
+        public PlayerIndex PlayerIndex
+        {
+            get
+            {
+                if (this.PlayerNumber == PlayerNumber.One) return PlayerIndex.One;
+                if (this.PlayerNumber == PlayerNumber.Two) return PlayerIndex.Two;
+                if (this.PlayerNumber == PlayerNumber.Three) return PlayerIndex.Three;
+                
+                return PlayerIndex.Four;
+                
+            }
+        }
         public EmotionType EmotionType { 
             get { return etype; }
             set
@@ -59,11 +72,11 @@ namespace EmotionIsland
             {
                 case PlayerNumber.One: this.EmotionType = EmotionType.Angry;
                     break;
-                case PlayerNumber.Two: this.EmotionType = EmotionType.Happy;
+                case PlayerNumber.Two: this.EmotionType = EmotionType.Sad;
                     break;
-                case PlayerNumber.Three: this.EmotionType = EmotionType.Sad;
+                case PlayerNumber.Three: this.EmotionType = EmotionType.Terrified;
                     break;
-                case PlayerNumber.Four: this.EmotionType = EmotionType.Terrified;
+                case PlayerNumber.Four: this.EmotionType = EmotionType.Happy;
                     break;
                 default:
                     this.EmotionType = EmotionType.Neutral;
@@ -112,7 +125,7 @@ namespace EmotionIsland
 
             this.HandleMovement();
 
-            if (Input.IsKeyDown(this.keyBindings.Fire))
+            if (Input.PressedX(this.PlayerIndex))
             {
                 this.FireWeaponAt(this.Position + this.GetLastMovementDirection() * 50);
             }
@@ -149,20 +162,19 @@ namespace EmotionIsland
             this.Velocity = Vector2.Zero;
 
             const int moveSpeed = 3;
-            if (Input.IsKeyDown(this.keyBindings.Up))
+            if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.Y > .5)
             {
                 this.Velocity = new Vector2(this.Velocity.X, -moveSpeed);
             }
-            else if (Input.IsKeyDown(this.keyBindings.Down))
+            else if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.Y < -.5)
             {
                 this.Velocity = new Vector2(this.Velocity.X, moveSpeed);
             }
-
-            if (Input.IsKeyDown(this.keyBindings.Left))
+            if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.X < -.5)
             {
                 this.Velocity = new Vector2(-moveSpeed, this.Velocity.Y);
             }
-            else if (Input.IsKeyDown(this.keyBindings.Right))
+            else if (Input.gps[(int)PlayerIndex].ThumbSticks.Left.X > .5)
             {
                 this.Velocity = new Vector2(moveSpeed, this.Velocity.Y);
             }

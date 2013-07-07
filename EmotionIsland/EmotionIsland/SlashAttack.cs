@@ -27,6 +27,9 @@ namespace EmotionIsland
 
         public override void Update()
         {
+            Vector2 offset = this.Owner.LastMovement;
+            offset.Normalize();
+            this.Position = this.Owner.Center + offset * 4;
             if (this.CurAnimation.IsDonePlaying())
                 this.World.Remove(this);
 
