@@ -51,6 +51,7 @@ namespace EmotionIsland
 
         public Player(World world, Vector2 pos, PlayerNumber pn) : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, START_HEALTH)
         {
+            CollidesWithWorld = true;
             
             this.PlayerNumber = pn;
             this.keyBindings = PlayerKeyBindings.FromPlayerNumber(pn);

@@ -52,6 +52,10 @@ namespace EmotionIsland
             foreach (var particle in this.Particles)
             {
                 particle.Update();
+                if (particle.IsAlive == false)
+                {
+                    Particles.BufferRemove(particle);
+                }
             }
 
             Particles.ApplyBuffers();

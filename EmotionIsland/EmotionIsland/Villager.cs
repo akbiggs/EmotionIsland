@@ -56,6 +56,7 @@ namespace EmotionIsland
         public Villager(World world, Vector2 pos, EmotionType emotion) 
             : base(world, pos, new Vector2(32), TextureBin.Pixel, 3, emotion)
         {
+            CollidesWithWorld = true;
             this.body = new GameObject(this.World, this.Position, this.Size, TextureBin.Pixel);
             this.head = new GameObject(this.World, this.Position, this.Size, TextureBin.Pixel);
 

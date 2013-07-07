@@ -14,7 +14,8 @@ namespace EmotionIsland
             Grass = 0,
             Water = 1,
             Sand = 2,
-            Mountain = 3
+            Mountain = 3,
+            Doodad = 255
         }
 
         public enum BlockTiles
@@ -298,7 +299,6 @@ namespace EmotionIsland
                 }
             }
 
-
             //Apply tilesets
             for (int r = 0; r < height; r++)
             {
@@ -310,27 +310,53 @@ namespace EmotionIsland
                     {
                         collisionMap[tile] = (int)BlockTiles.Free;
                         if (checkTile(c - 1, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 134; //TOP BOTTOM LEFT
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 124; //TOP BOTTOM RIGHT
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
                         else if (checkTile(c + 1, r + 1, (int)BaseTiles.Grass) && checkTile(c + 1, r, (int)BaseTiles.Sand)
                             && checkTile(c, r + 1, (int)BaseTiles.Sand))
+                        {
                             tiles[tile] = 6; //TOP LEFT
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c - 1, r - 1, (int)BaseTiles.Grass) && checkTile(c, r - 1, (int)BaseTiles.Sand)
                             && checkTile(c - 1, r, (int)BaseTiles.Sand))
+                        {
                             tiles[tile] = 28; //BOTTOM RIGHT
+                            collisionMap[tile] = (int)BlockTiles.Right;
+                        }
                         else if (checkTile(c - 1, r + 1, (int)BaseTiles.Grass) && checkTile(c, r + 1, (int)BaseTiles.Sand)
                         && checkTile(c - 1, r, (int)BaseTiles.Sand))
+                        {
                             tiles[tile] = 8; //TOP RIGHT
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c, r - 1, (int)BaseTiles.Sand) && checkTile(c + 1, r, (int)BaseTiles.Sand)
                             && checkTile(c + 1, r - 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 26; //BOTTOM LEFT
+                            collisionMap[tile] = (int)BlockTiles.Left;
+                        }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Grass) &&
                             checkTile(c, r - 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 144; //BOTTOM with Grass on right
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c - 1, r, (int)BaseTiles.Grass) &&
                             checkTile(c, r - 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 154; //BOTTOM with Grass on left
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c, r + 1, (int)BaseTiles.Grass))
                         {
                             tiles[tile] = 7; //TOP
@@ -340,7 +366,7 @@ namespace EmotionIsland
                         else if (checkTile(c, r - 1, (int)BaseTiles.Grass))
                         {
                             tiles[tile] = 10 + rand.Next(0, 3); //BOTTOM
-                            collisionMap[tile] = (int)BlockTiles.Up | (int)BlockTiles.Down;
+                            collisionMap[tile] = (int)BlockTiles.All;
                         }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Grass))
                         {
@@ -397,41 +423,141 @@ namespace EmotionIsland
                     else if (checkTile(c, r, (int)BaseTiles.Grass))
                     {
                         if (checkTile(c - 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 135; //TOP BOTTOM LEFT
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 125; //TOP BOTTOM RIGHT
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
                         else if (checkTile(c + 1, r + 1, (int)BaseTiles.Mountain) && checkTile(c + 1, r, (int)BaseTiles.Grass)
                             && checkTile(c, r + 1, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 36; //TOP LEFT
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c - 1, r - 1, (int)BaseTiles.Mountain) && checkTile(c, r - 1, (int)BaseTiles.Grass)
                             && checkTile(c - 1, r, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 58; //BOTTOM RIGHT
+                            collisionMap[tile] = (int)BlockTiles.Right;
+                        }
                         else if (checkTile(c - 1, r + 1, (int)BaseTiles.Mountain) && checkTile(c, r + 1, (int)BaseTiles.Grass)
                         && checkTile(c - 1, r, (int)BaseTiles.Grass))
+                        {
                             tiles[tile] = 38; //TOP RIGHT
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c, r - 1, (int)BaseTiles.Grass) && checkTile(c + 1, r, (int)BaseTiles.Grass)
                             && checkTile(c + 1, r - 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 56; //BOTTOM LEFT
+                            collisionMap[tile] = (int)BlockTiles.Left;
+                        }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
                             checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 145; //BOTTOM with Mountain on right
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c - 1, r, (int)BaseTiles.Mountain) &&
                             checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 155; //BOTTOM with Mountain on left
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c, r + 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 37; //TOP
+                            collisionMap[tile] = (int)BlockTiles.Up;
+                            collisionMap[tile + width] = (int)BlockTiles.Down;
+                        }
                         else if (checkTile(c, r - 1, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 57; //BOTTOM
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
                         else if (checkTile(c + 1, r, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 46; //LEFT SIDE
+                            collisionMap[tile] = (int)BlockTiles.Left;
+                            collisionMap[tile + 1] = (int)BlockTiles.Right;
+                        }
                         else if (checkTile(c - 1, r, (int)BaseTiles.Mountain))
+                        {
                             tiles[tile] = 48; //RIGHT SIDE
+                            collisionMap[tile] = (int)BlockTiles.Right;
+                            collisionMap[tile - 1] = (int)BlockTiles.Left;
+                        }
                         else
+                        {
                             tiles[tile] = rand.Next(0, 3);//Grass
+                        }
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Mountain))
                     {
                         tiles[tile] = 47;
+                    }
+                }
+            }
+
+            //Populate doodads
+            for (int r = 0; r < height; r++)
+            {
+                for (int c = 0; c < width; c++)
+                {
+                    int tile = r * width + c;
+                    if (checkTile(c, r, (int)BaseTiles.Grass) && 
+                        checkTile(c, r+1, (int)BaseTiles.Grass) && 
+                        checkTile(c, r-1, (int)BaseTiles.Grass) && 
+                        checkTile(c+1, r, (int)BaseTiles.Grass) && 
+                        checkTile(c-1, r, (int)BaseTiles.Grass) && 
+                        checkTile(c+1, r+1, (int)BaseTiles.Grass) && 
+                        checkTile(c-1, r-1, (int)BaseTiles.Grass) && rand.Next(0, 4) == 0)
+                    {
+                        int doodadType = rand.Next(0, 9);
+                        if (doodadType == 0)
+                        {
+                            tiles[tile] = 15;
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
+                        else if (doodadType == 1)
+                        {
+                            tiles[tile] = 25;
+                            collisionMap[tile] = (int)BlockTiles.All;
+                        }
+                        else if (doodadType == 2)
+                        {
+                            tiles[tile] = 45;
+                        }
+                        else if (doodadType == 3)
+                        {
+                            tiles[tile] = 44;
+                        }
+                        else if (doodadType == 4)
+                        {
+                            tiles[tile] = 34;
+                            tiles[tile + 1] = 35;
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile + 1] = (int)BlockTiles.All;
+                            tempTiles[tile + 1] = (int)BaseTiles.Doodad;
+                        }
+                        else if (doodadType >= 5)
+                        {
+                            tiles[tile] = 14;
+                            tiles[tile + width] = 24;
+
+                            collisionMap[tile] = (int)BlockTiles.All;
+                            collisionMap[tile + width] = (int)BlockTiles.All;
+                            tempTiles[tile + width] = (int)BaseTiles.Doodad;
+                        }
+                        
+                        tempTiles[tile] = (int)BaseTiles.Doodad;
+                        
                     }
                 }
             }
@@ -562,7 +688,7 @@ namespace EmotionIsland
                 Camera.Update(GetPlayerCenter());
 
             TimeSpan span = new TimeSpan(DateTime.Now.Ticks);
-            if (span.TotalMilliseconds - animationTimer > 100)
+            if (span.TotalMilliseconds - animationTimer > 200)
             {
                 animationTimer = (long)span.TotalMilliseconds;
                 animationCounter += 1;
