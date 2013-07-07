@@ -335,6 +335,7 @@ namespace EmotionIsland
                         {
                             tiles[tile] = 16; //LEFT SIDE
                             collisionMap[tile] = (int)BlockTiles.Left;
+                            collisionMap[tile + 1] = (int)BlockTiles.Right;
                         }
                         else if (checkTile(c - 1, r, (int)BaseTiles.Grass))
                         {
