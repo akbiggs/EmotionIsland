@@ -536,11 +536,6 @@ namespace EmotionIsland
             }
         }
 
-        public void Remove(EmotionBeam beam)
-        {
-            this.emotionBeams.BufferRemove(beam);
-        }
-
         public void Update()
         {
             TimeSpan span = new TimeSpan(DateTime.Now.Ticks);

@@ -7,9 +7,12 @@ namespace EmotionIsland
     {
         private const int PARTICLE_DELAY = 5;
 
-        public bool Stopped { get; set; }
+        public bool Stopped { get { return this.stopped; } set
+        {
+            this.stopped = value; if (value) this.Timer = 0; } }
 
         public BufferedList<BeamParticle> Particles = new BufferedList<BeamParticle>();
+        private bool stopped;
 
         public World World { get; set; }
         public Vector2 BasePosition { get; set; }
@@ -37,11 +40,14 @@ namespace EmotionIsland
 
         public void Update()
         {
-            if (this.Timer%PARTICLE_DELAY == 0)
+            if (!this.Stopped)
             {
-                this.SpawnParticle();
+                if (this.Timer%PARTICLE_DELAY == 0)
+                {
+                    this.SpawnParticle();
+                }
+                this.Timer++;
             }
-            this.Timer++;
 
             foreach (var particle in this.Particles)
             {
