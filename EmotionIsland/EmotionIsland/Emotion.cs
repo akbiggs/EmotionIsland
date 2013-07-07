@@ -111,16 +111,16 @@ namespace EmotionIsland
                     return "scared";
                 case EmotionType.Happy:
                     return "happy";
+                case EmotionType.Hateful:
+                    return "hateful";
+                case EmotionType.Vigilant:
+                    return "vigilant";
+                case EmotionType.Amazed:
+                    return "amazed";
+                case EmotionType.Admirative:
+                    return "admirative";
                 default:
                     return "neutral";
-                    //case EmotionType.Angry:
-                    //    return "angry";
-                    //case EmotionType.Angry:
-                    //    return "angry";
-                    //case EmotionType.Angry:
-                    //    return "angry";
-                    //case EmotionType.Angry:
-                    //    return "angry";
             }
         }
 

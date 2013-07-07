@@ -27,6 +27,7 @@ namespace EmotionIsland
         {
             get { return EmotionType == EmotionType.Hateful ? 2 : 1; }
         }
+
         private GameObject body, head;
         private int wanderTimer = 0;
         public Vector2 WanderDirection {
@@ -79,11 +80,23 @@ namespace EmotionIsland
                     new AnimationSet("happy_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 3),
                     new AnimationSet("happy_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 4),
 
+                    new AnimationSet("vigilant_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 5),
+                    new AnimationSet("vigilant_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 5+1),
+                    new AnimationSet("vigilant_side", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 5+2),
+                    new AnimationSet("vigilant_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 5+3),
+                    new AnimationSet("vigilant_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 5+4),
+
                     new AnimationSet("angry_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 10 + 0),
                     new AnimationSet("angry_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 10 + 1),
                     new AnimationSet("angry_side", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 10 + 2),
                     new AnimationSet("angry_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 10 + 3),
                     new AnimationSet("angry_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 10 + 4),
+
+                    new AnimationSet("hateful_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 15+0),
+                    new AnimationSet("hateful_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 15+1),
+                    new AnimationSet("hateful_side", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 15+2),
+                    new AnimationSet("hateful_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 15+3),
+                    new AnimationSet("hateful_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 15+4),
 
                     new AnimationSet("sad_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 20 + 0),
                     new AnimationSet("sad_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 20 + 1),
@@ -91,11 +104,23 @@ namespace EmotionIsland
                     new AnimationSet("sad_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 20 + 3),
                     new AnimationSet("sad_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 20 + 4),
 
+                    new AnimationSet("amazed_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 25+0),
+                    new AnimationSet("amazed_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 25+1),
+                    new AnimationSet("amazed_side", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 25+2),
+                    new AnimationSet("amazed_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 25+3),
+                    new AnimationSet("amazed_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 25+4),
+
                     new AnimationSet("scared_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 30 + 0),
                     new AnimationSet("scared_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 30 + 1),
                     new AnimationSet("scared_side", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 30 + 2),
                     new AnimationSet("scared_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 30 + 3),
                     new AnimationSet("scared_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 30 + 4),
+
+                    new AnimationSet("admirative_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 35+0),
+                    new AnimationSet("admirative_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 35+1),
+                    new AnimationSet("admirative_side", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 35+2),
+                    new AnimationSet("admirative_upperdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 35+3),
+                    new AnimationSet("admirative_upper", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 35+4),
 
                     new AnimationSet("neutral_lower", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 40 + 0),
                     new AnimationSet("neutral_lowerdiag", TextureBin.Get("emotions"), 1, 32, 32, 1, 5, false, 40 + 1),
@@ -118,7 +143,7 @@ namespace EmotionIsland
             }
             else
             {
-                this.head.Position = this.Position;
+                this.head.Position = this.Position - new Vector2(0, 2);
                 this.body.Position = this.Position;
 
                 this.UpdateAnimation();
@@ -275,6 +300,19 @@ namespace EmotionIsland
             }
 
             base.NeutralUpdate();
+        }
+
+        public override void HatefulUpdate()
+        {
+            this.MoveSpeed = 3.5f;
+            this.AngryUpdate();
+            
+            base.HatefulUpdate();
+        }
+        public override void AdmirativeUpdate()
+        {
+            this.HappyUpdate();
+            base.AdmirativeUpdate();
         }
 
         public override void OnEmotionChanged(GameObject source)
