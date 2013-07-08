@@ -1174,9 +1174,11 @@ namespace EmotionIsland
 
             if (++this.Timer-spawnTime == 0 && !this.PartyWiped)
             {
-                SpawnWaveOfVillagers();
-                this.spawnTime = MathExtra.RandomInt(200, 500);
-                this.Timer = 0;
+                if (SpawnWaveOfVillagers())
+                {
+                    this.spawnTime = MathExtra.RandomInt(200, 500);
+                    this.Timer = 0;
+                }
             }
 
             foreach (Player player in this.players)
@@ -1272,10 +1274,10 @@ namespace EmotionIsland
             return center;
         }
 
-        private void SpawnWaveOfVillagers()
+        private bool SpawnWaveOfVillagers()
         {
             if (players.Count <= 0)
-                return;
+                return true;
 
             Player randomPlayer = players[MathExtra.RandomInt(players.Count)];
 
@@ -1295,6 +1297,8 @@ namespace EmotionIsland
                 else
                     spawnOffset.Y -= rand.Next(15, 15);
             }
+            if (counter >= 10)
+                return false;
 
             spawnOffset = new Vector2(spawnOffset.X * 32 - randomPlayer.Position.X, spawnOffset.Y * 32 - randomPlayer.Position.Y);
 
@@ -1306,6 +1310,7 @@ namespace EmotionIsland
                 villager.EmotionalTarget = randomPlayer;
                 this.Add(villager);
             }
+            return true;
         }
 
         protected int Timer

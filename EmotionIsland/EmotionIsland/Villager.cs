@@ -143,7 +143,7 @@ namespace EmotionIsland
             {
                 World.Remove(this);
             }
-            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 20000000)
+            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 800000)
             {
                 World.Remove(this);
             }

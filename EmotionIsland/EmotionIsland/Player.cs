@@ -75,22 +75,27 @@ namespace EmotionIsland
             
             this.PlayerNumber = pn;
             this.keyBindings = PlayerKeyBindings.FromPlayerNumber(pn);
-            switch (pn)
+            EmotionType randomEmotion = EmotionType.Angry;
+            
+            Random rand = new Random();
+            int randEmotionNum = rand.Next(0, 4);
+
+            switch (randEmotionNum)
             {
-                case PlayerNumber.One: this.EmotionType = EmotionType.Angry;
+                case 0: this.EmotionType = EmotionType.Angry;
                     break;
-                case PlayerNumber.Two: this.EmotionType = EmotionType.Sad;
+                case 1: this.EmotionType = EmotionType.Sad;
                     break;
-                case PlayerNumber.Three: this.EmotionType = EmotionType.Terrified;
+                case 2: this.EmotionType = EmotionType.Terrified;
                     break;
-                case PlayerNumber.Four: this.EmotionType = EmotionType.Happy;
+                case 3: this.EmotionType = EmotionType.Happy;
                     break;
                 default:
                     this.EmotionType = EmotionType.Neutral;
                     break;
             }
             this.Emotion = new Emotion(this.EmotionType);
-            string spritesheetName = "characterSheetWalk_0" + (int) (this.PlayerNumber);
+            string spritesheetName = "characterSheetWalk_0" + (randEmotionNum+1);
 
             this.Animations = new List<AnimationSet>
                 {
