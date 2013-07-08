@@ -1150,7 +1150,11 @@ namespace EmotionIsland
                     this.LastCameraPos = GetPlayerCenter();
                 }
             }
+#if KEYBOARD
+            for (int i = 2; i <= 2; i++)
+#else
             for (int i = 2; i <= 4; i++)
+#endif           
             {
                 PlayerIndex index;
                 if (!PartyWiped && PlayerIndex.TryParse(value: i.ToString(), result: out index))

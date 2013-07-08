@@ -41,6 +41,17 @@ namespace EmotionIsland
                         return ButtonState.Released;
                 }
             }
+            public ButtonState X
+            {
+                get
+                {
+                    if (Input.IsKeyDown(KeyboardControls.Attack1, index))
+                        return ButtonState.Pressed;
+                    else
+                        return ButtonState.Released;
+                }
+            }
+
         }
 
         public class GamePadStateEmulator
@@ -51,6 +62,14 @@ namespace EmotionIsland
             public TriggerEmulator Triggers;
 
             public ButtonEmulator Buttons;
+
+            public bool IsConnected
+            {
+                get
+                {
+                    return true;
+                }
+            }
 
             public GamePadStateEmulator(PlayerIndex pIndex)
             {

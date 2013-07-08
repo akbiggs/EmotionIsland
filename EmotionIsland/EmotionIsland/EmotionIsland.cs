@@ -101,6 +101,21 @@ namespace EmotionIsland
             if (this.fadingTitle)
                 this.world.Update();
 
+#if KEYBOARD
+            if (this.world != null && this.world.PartyWiped &&
+                (Input.gps[(int)PlayerIndex.One].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Two].Buttons.Start == ButtonState.Pressed))
+            {
+                this.world = new World();
+            }
+            if (this.ShouldDrawTitle &&
+                (Input.gps[(int)PlayerIndex.One].Buttons.Start == ButtonState.Pressed ||
+                Input.gps[(int)PlayerIndex.Two].Buttons.Start == ButtonState.Pressed))
+            {
+                this.fadingTitle = true;
+                FadeTo(Color.Black);
+            }
+#else
             if (this.world != null && this.world.PartyWiped && 
                 (Input.gps[(int)PlayerIndex.One].Buttons.Start == ButtonState.Pressed ||
                 Input.gps[(int)PlayerIndex.Two].Buttons.Start == ButtonState.Pressed ||
@@ -118,6 +133,7 @@ namespace EmotionIsland
                 this.fadingTitle = true;
                 FadeTo(Color.Black);
             }
+#endif
             base.Update(gameTime);
         }
 
