@@ -56,7 +56,7 @@ namespace EmotionIsland
         public Villager(World world, Vector2 pos, EmotionType emotion) 
             : base(world, pos, new Vector2(32), TextureBin.Pixel, 3, emotion)
         {
-            MoveSpeed = 2.8f;
+            MoveSpeed = 2.9f;
             CollidesWithWorld = true;
             this.body = new GameObject(this.World, this.Position, this.Size, TextureBin.Pixel);
             this.head = new GameObject(this.World, this.Position, this.Size, TextureBin.Pixel);
@@ -133,8 +133,8 @@ namespace EmotionIsland
 
             this.head.ChangeAnimation(this.Emotion.ToString() + "_lower");
 
-            this.body.Scale = Vector2.One*2;
-            this.head.Scale = Vector2.One*2;
+            this.body.Scale = Vector2.One*1.5f;
+            this.head.Scale = Vector2.One*1.5f;
         }
         public override void Update()
         {
@@ -143,7 +143,7 @@ namespace EmotionIsland
             {
                 World.Remove(this);
             }
-            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 800000)
+            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 900000)
             {
                 World.Remove(this);
             }
@@ -290,9 +290,9 @@ namespace EmotionIsland
         public override void TerrifiedUpdate()
         {
             Vector2 fleeDirection = -DirectionToTarget;
-            if (Vector2.DistanceSquared(this.Position, this.EmotionalTarget.Position) < Math.Pow(200, 2))
+            if (Vector2.DistanceSquared(this.Position, this.EmotionalTarget.Position) < Math.Pow(400, 2))
             {
-                this.NextPosition = this.EmotionalTarget.Position + 200*fleeDirection;
+                this.NextPosition = this.EmotionalTarget.Position + 400*fleeDirection;
             }
 
             base.TerrifiedUpdate();
@@ -301,7 +301,7 @@ namespace EmotionIsland
         public override void NeutralUpdate()
         {
             ++wanderTimer;
-            if (wanderTimer > 1)
+            if (wanderTimer > MathExtra.RandomInt(5) + 60)
             {
                 this.WanderDirection = this.PickRandomDirection();
                 this.wanderTimer = 0;
@@ -332,7 +332,7 @@ namespace EmotionIsland
             }
             else if (this.EmotionType == EmotionType.Angry)
             {
-                this.EmotionalTarget = this.FindClosestVillager();
+                this.EmotionalTarget = this.FindClosestNotAngryVillager();
             }
             else
             {
@@ -346,6 +346,26 @@ namespace EmotionIsland
             Villager closestVillager = null;
 
             foreach (var villager in this.World.Villagers)
+            {
+                if (villager != this)
+                {
+                    float distanceSquared = Vector2.DistanceSquared(this.Position, villager.Position);
+                    if (distanceSquared < closestDistanceSquared)
+                    {
+                        closestDistanceSquared = distanceSquared;
+                        closestVillager = villager;
+                    }
+                }
+            }
+            return closestVillager;
+        }
+
+        public Villager FindClosestNotAngryVillager()
+        {
+            float closestDistanceSquared = 10000000;
+            Villager closestVillager = null;
+
+            foreach (var villager in this.World.Villagers.FindAll(villager => villager.EmotionType != EmotionType.Angry && villager.EmotionType != EmotionType.Hateful))
             {
                 if (villager != this)
                 {
@@ -379,32 +399,9 @@ namespace EmotionIsland
 
         private Vector2 PickRandomDirection()
         {
-            Random random = new Random();
-            if (random.Next(2) == 0)
-            {
-                if (random.Next(2) == 0)
-                {
-                    return new Vector2(1, 0);
-                }
-                else
-                {
-                    return new Vector2(-1, 0);
-                }
-            }
-            else
-            {
-                if (random.Next(2) == 0)
-                {
-                    return new Vector2(0, 1);
-                }
-                else
-                {
-                    return new Vector2(0, -1);
-                    
-                }
-            }
-
-            return new Vector2(0, 0);
+            Random random = new Random((int)DateTime.Now.Ticks);
+            return new Vector2(random.Next(-1, 2), random.Next(-1, 2));
+            
         }
         #endregion
 
@@ -419,7 +416,7 @@ namespace EmotionIsland
             else if (gameObject is SlashAttack)
             {
                 SlashAttack attack = ((SlashAttack) gameObject);
-                if (attack.Owner != this)
+                if (attack.Owner != this && ((Villager)attack.Owner).EmotionalTarget != this.EmotionalTarget)
                 {
                     this.TakeDamage(attack.Owner.Damage, attack.Direction);
                 }

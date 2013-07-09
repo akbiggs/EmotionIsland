@@ -10,7 +10,7 @@ namespace EmotionIsland
 
         public int MaxHealth { get; set; }
 
-        private const float KNOCKBACK_SPEED = 3;
+        private const float KNOCKBACK_SPEED = 2f;
 
         public bool ShouldHeal
         {
@@ -102,7 +102,7 @@ namespace EmotionIsland
         public void Heal()
         {
             this.healTimer++;
-            if (this.ShouldHeal)
+            if (this.ShouldHeal && this.Health != this.MaxHealth)
             {
                 this.Health += 1;
                 this.healTimer = 0;

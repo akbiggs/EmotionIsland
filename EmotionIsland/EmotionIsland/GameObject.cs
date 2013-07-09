@@ -93,23 +93,28 @@ namespace EmotionIsland
             if (gameObject.IsSolid && this.IsSolid)
             {
                 Rectangle intersection = Rectangle.Intersect(this.BBox, gameObject.BBox);
+                Vector2 nextPosition;
                 if (intersection.Width > intersection.Height)
                 {
                     if (this.Center.X < gameObject.Center.X)
-                        this.Position = new Vector2(this.Position.X - (intersection.Width + 1), this.Position.Y);
+                        nextPosition = new Vector2(this.Position.X - (intersection.Width + 1), this.Position.Y);
                     else
-                        this.Position = new Vector2(this.Position.X + (intersection.Width + 1), this.Position.Y);
-
-                    this.HandleCollision(gameObject);
+                        nextPosition = new Vector2(this.Position.X + (intersection.Width + 1), this.Position.Y);
+                    
                 }
                 else
                 {
 
                     if (this.Center.Y < gameObject.Center.Y)
-                        this.Position = new Vector2(this.Position.X, this.Position.Y - (intersection.Height + 1));
+                         nextPosition = new Vector2(this.Position.X, this.Position.Y - (intersection.Height + 1));
                     else
-                        this.Position = new Vector2(this.Position.X, this.Position.Y + (intersection.Height + 1));
-                    this.HandleCollision(gameObject);
+                        nextPosition = new Vector2(this.Position.X, this.Position.Y + (intersection.Height + 1));
+                }
+
+                if (this is Villager)
+                {
+                    Villager villager = (Villager)this;
+                    villager.NextPosition = nextPosition;
                 }
             }
         }
@@ -160,10 +165,13 @@ namespace EmotionIsland
 
                     if (CollidesWithWorld)
                     {
-                        tileX = ((int)Center.X / 32);
+                        if(velocity.X > 0)
+                            tileX = ((int)(Position.X + Size.X) / 32);
+                        else
+                            tileX = ((int)(Position.X) / 32);
                         tileY = ((int)Center.Y / 32);
 
-                        if (tileX < 0)
+                        if (tileX < 0 || tileX > World.width)
                             return;
 
                         newTileBlock = World.collisionMap[tileX + tileY * World.width];
@@ -183,7 +191,11 @@ namespace EmotionIsland
                     if (CollidesWithWorld)
                     {
                         tileX = ((int)Center.X / 32);
-                        tileY = ((int)Center.Y / 32);
+
+                        if (velocity.Y > 0)
+                            tileY = ((int)(Position.Y + Size.Y) / 32);
+                        else
+                            tileY = ((int)(Position.Y) / 32);
 
                         if (tileY < 0)
                             return;

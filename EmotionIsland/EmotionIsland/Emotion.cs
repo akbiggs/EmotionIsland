@@ -176,7 +176,6 @@ namespace EmotionIsland
         Terrified,
         Happy,
         Sad,
-
         Vigilant,
         Admirative,
         Amazed,

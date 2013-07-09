@@ -21,7 +21,7 @@ namespace EmotionIsland
 
         private World world;
         public Color fadeColor = Color.Black;
-        private static Color nextFade;
+        public static Color nextFade;
         private bool fadingTitle;
 
         public EmotionIsland()
@@ -42,8 +42,8 @@ namespace EmotionIsland
             // TODO: Add your initialization logic here
             IsMouseVisible = false;
             graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 780;
 
             graphics.ApplyChanges();
             base.Initialize();
@@ -82,7 +82,7 @@ namespace EmotionIsland
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Input.IsKeyDown(Keys.I))
                 this.Exit();
 
             if (fadingTitle && this.fadeColor == Color.Black)

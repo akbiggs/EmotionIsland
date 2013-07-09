@@ -129,6 +129,25 @@ namespace EmotionIsland
             {
                 this.Terrify(source);
             }
+            else if (type == EmotionType.Neutral)
+            {
+                if (this.EmotionType == global::EmotionIsland.EmotionType.Angry)
+                {
+                    this.Terrify(source);
+                }
+                else if (this.EmotionType == global::EmotionIsland.EmotionType.Terrified)
+                {
+                    this.Anger(source);
+                }
+                else if (this.EmotionType == global::EmotionIsland.EmotionType.Happy)
+                {
+                    this.Depress(source);
+                }
+                else if (this.EmotionType == global::EmotionIsland.EmotionType.Sad)
+                {
+                    this.Excite(source);
+                }
+            }
 
             if (old != this.EmotionType)
             {
@@ -163,6 +182,7 @@ namespace EmotionIsland
 
         public virtual void VigilantUpdate()
         {
+            this.NeutralUpdate();
         }
 
         public virtual void HappyUpdate()
@@ -175,6 +195,7 @@ namespace EmotionIsland
 
         public virtual void AmazedUpdate()
         {
+            this.NeutralUpdate();
         }
 
         public virtual void HatefulUpdate()
@@ -187,6 +208,7 @@ namespace EmotionIsland
 
         public virtual void SadUpdate()
         {
+            this.NeutralUpdate();
         }
 
         public virtual void NeutralUpdate()

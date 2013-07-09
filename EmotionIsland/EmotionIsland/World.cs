@@ -77,7 +77,7 @@ namespace EmotionIsland
             //this.villagers.Add(new Villager(this, new Vector2(200, 160), EmotionType.Happy));
             this.villagers.Add(new Villager(this, new Vector2(200, 200), EmotionType.Terrified));
             //this.villagers.Add(new Villager(this, new Vector2(200, 240), EmotionType.Neutral));
-            this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
+            //this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace EmotionIsland
             }
 
             //Create lakes
-            int lakes = rand.Next(8, 23);
+            int lakes = rand.Next(8, 40);
             for (int l = 0; l < lakes; l++)
             {
                 Vector2 origin = new Vector2(0, 0);
@@ -184,7 +184,7 @@ namespace EmotionIsland
             }
 
             //Create mountains
-            int mountains = rand.Next(4, 9);
+            int mountains = rand.Next(6, 15);
             for (int m = 0; m < mountains; m++)
             {
                 Vector2 origin = new Vector2(0, 0);
@@ -906,11 +906,13 @@ namespace EmotionIsland
 
                     //Do grass doodads
                     if (checkTile(c, r, (int)BaseTiles.Grass) && 
-                        checkTile(c, r+1, (int)BaseTiles.Grass) && 
+                        checkTile(c, r+1, (int)BaseTiles.Grass) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Grass) && 
                         checkTile(c, r-1, (int)BaseTiles.Grass) && 
                         checkTile(c+1, r, (int)BaseTiles.Grass) && 
                         checkTile(c-1, r, (int)BaseTiles.Grass) && 
-                        checkTile(c+1, r+1, (int)BaseTiles.Grass) && 
+                        checkTile(c+1, r+1, (int)BaseTiles.Grass) &&
+                        checkTile(c + 1, r - 1, (int)BaseTiles.Grass) && 
                         checkTile(c-1, r-1, (int)BaseTiles.Grass) && rand.Next(0, 4) == 0)
                     {
                         int doodadType = rand.Next(0, 9);
@@ -958,6 +960,7 @@ namespace EmotionIsland
                         checkTile(c + 1, r, (int)BaseTiles.Sand) &&
                         checkTile(c - 1, r, (int)BaseTiles.Sand) &&
                         checkTile(c + 1, r + 1, (int)BaseTiles.Sand) &&
+                        checkTile(c + 2, r - 2, (int)BaseTiles.Sand) &&
                         checkTile(c - 1, r - 1, (int)BaseTiles.Sand) && rand.Next(0, 4) == 0)
                     {
                         if (rand.Next(0, 5) == 0)
@@ -978,12 +981,14 @@ namespace EmotionIsland
                         }
                     }
 
+                    //Mountin rock doodads
                     if (checkTile(c, r, (int)BaseTiles.Mountain) &&
                         checkTile(c, r + 1, (int)BaseTiles.Mountain) &&
                         checkTile(c, r - 1, (int)BaseTiles.Mountain) &&
                         checkTile(c + 1, r, (int)BaseTiles.Mountain) &&
                         checkTile(c - 1, r, (int)BaseTiles.Mountain) &&
                         checkTile(c + 1, r + 1, (int)BaseTiles.Mountain) &&
+                        checkTile(c + 2, r + 2, (int)BaseTiles.Mountain) &&
                         checkTile(c - 1, r - 1, (int)BaseTiles.Mountain) && rand.Next(0, 12) == 0)
                     {
                         tiles[tile] = 105;
@@ -1136,7 +1141,7 @@ namespace EmotionIsland
             }
             else
             {
-                throw new InvalidOperationException("Don't have a handler for removing this type of object");
+                //throw new InvalidOperationException("Don't have a handler for removing this type of object");
             }
         }
 
@@ -1172,7 +1177,7 @@ namespace EmotionIsland
                     animationCounter = 0;
             }
 
-            if (++this.Timer-spawnTime == 0 && !this.PartyWiped)
+            if (++this.Timer-spawnTime >= 0 && !this.PartyWiped)
             {
                 if (SpawnWaveOfVillagers())
                 {
@@ -1280,7 +1285,7 @@ namespace EmotionIsland
                 return true;
 
             Player randomPlayer = players[MathExtra.RandomInt(players.Count)];
-
+            
             Vector2 spawnOffset = new Vector2(0, 0);
             int counter = 0;
             while (counter < 10 && checkTile((int)spawnOffset.X, (int)spawnOffset.Y, (int)BaseTiles.Water) == true)
@@ -1306,8 +1311,18 @@ namespace EmotionIsland
 
             for (int i = 0; i < MathExtra.RandomInt(20, 30); i++)
             {
-                Villager villager = new Villager(this, randomPlayer.Position + spawnOffset + new Vector2(MathExtra.RandomInt(0, 200), MathExtra.RandomInt(0, 200)), randomEmotion);
-                villager.EmotionalTarget = randomPlayer;
+                Vector2 spawnPosition = new Vector2(0,0);
+                do
+                {
+                    spawnPosition = randomPlayer.Position + spawnOffset + new Vector2(MathExtra.RandomInt(0, 200), MathExtra.RandomInt(0, 200));
+                } while (checkTile((int)spawnPosition.X / 32, (int)spawnPosition.Y / 32, (int)BaseTiles.Water));
+
+                Villager villager = new Villager(this, spawnPosition, randomEmotion);
+                Villager closestNonAngry = villager.FindClosestNotAngryVillager();
+                if (MathExtra.RandomBool())
+                    villager.EmotionalTarget = randomPlayer;
+                else
+                    villager.EmotionalTarget = closestNonAngry;
                 this.Add(villager);
             }
             return true;

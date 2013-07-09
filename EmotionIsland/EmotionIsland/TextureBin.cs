@@ -35,7 +35,7 @@ namespace EmotionIsland
 
         public static void PlaySound(string name)
         {
-            soundDic[name].Play();
+            soundDic[name].Play(0.25f, 0, 0);
         }
     }
 }

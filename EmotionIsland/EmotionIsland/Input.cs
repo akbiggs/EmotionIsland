@@ -52,6 +52,17 @@ namespace EmotionIsland
                 }
             }
 
+            public ButtonState B
+            {
+                get
+                {
+                    if (Input.IsKeyDown(KeyboardControls.Attack2, index))
+                        return ButtonState.Pressed;
+                    else
+                        return ButtonState.Released;
+                }
+            }
+
         }
 
         public class GamePadStateEmulator

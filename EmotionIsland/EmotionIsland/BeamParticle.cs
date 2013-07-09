@@ -17,7 +17,18 @@ namespace EmotionIsland
             origin = position;
             this.OwnerBeam = owner;
             this.EmotionType = type;
-            this.Texture = TextureBin.Get("beam0" + (int) owner.Owner.PlayerNumber);
+
+            string index;
+            switch (EmotionType)
+            {
+                case EmotionType.Angry: index = "1"; break;
+                case EmotionType.Sad: index = "2"; break;
+                case EmotionType.Terrified: index = "3"; break;
+                case EmotionType.Happy: index = "4"; break;
+                default: index = "5"; break;
+            }
+
+            this.Texture = TextureBin.Get("beam0" + index);
         }
 
         public override void Update()
@@ -45,7 +56,7 @@ namespace EmotionIsland
             Texture2D tex = this.CurAnimation != null ? this.CurAnimation.GetTexture() : this.Texture;
             Rectangle? sourceRectangle = this.CurAnimation != null ? this.CurAnimation.GetFrameRect() : (Rectangle?)null;
 
-            spr.Draw(tex, this.Position, sourceRectangle, this.Color, this.Rotation, Vector2.Zero,
+            spr.Draw(tex, this.Position, sourceRectangle, Color.White, this.Rotation, Vector2.Zero,
                 this.CurAnimation == null ? this.Size : this.Scale,
                 FacingDirection == FacingDirection.Right ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 0);

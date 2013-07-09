@@ -75,8 +75,7 @@ namespace EmotionIsland
             
             this.PlayerNumber = pn;
             this.keyBindings = PlayerKeyBindings.FromPlayerNumber(pn);
-            EmotionType randomEmotion = EmotionType.Angry;
-            
+
             Random rand = new Random();
             int randEmotionNum = rand.Next(0, 4);
 
@@ -140,7 +139,11 @@ namespace EmotionIsland
 
             if (Input.gps[(int)PlayerIndex].Buttons.X == ButtonState.Pressed)
             {
-                this.FireWeaponAt(this.Position + this.GetLastMovementDirection() * 50);
+                this.FireWeaponAt(this.Position + this.GetLastMovementDirection() * 50, EmotionType);
+            }
+            else if (Input.gps[(int)PlayerIndex].Buttons.B == ButtonState.Pressed)
+            {
+                this.FireWeaponAt(this.Position + this.GetLastMovementDirection() * 50, EmotionType.Neutral);
             }
             else if (this.Beam != null)
             {
@@ -154,24 +157,26 @@ namespace EmotionIsland
             base.Die();
         }
 
-        private void FireWeaponAt(Vector2 targetPosition)
+        private void FireWeaponAt(Vector2 targetPosition, EmotionType emotion)
         {
             Vector2 direction = targetPosition - this.Position;
             direction.Normalize();
             if (this.Beam == null)
             {
-                EmotionBeam beam = new EmotionBeam(World, this.Center + this.GetBeamOffset(), direction, EmotionType, this);
+                EmotionBeam beam = new EmotionBeam(World, this.Center + this.GetBeamOffset(), direction, emotion, this);
                 this.Beam = beam;
                 this.World.Add(this.Beam);
             }
             else
             {
+                this.Beam.Emotion = new Emotion(emotion);
                 this.Beam.Direction = direction;
             }
             this.Beam.Stopped = false;
             if (this.playFireTimer == 0)
             {
-                TextureBin.PlaySound("shoot01");
+                if (EmotionIsland.nextFade == Color.Transparent)
+                    TextureBin.PlaySound("shoot01");
                 this.playFireTimer = 8;
             }
         }
