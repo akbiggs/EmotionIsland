@@ -1322,9 +1322,7 @@ namespace EmotionIsland
                 } while (checkTile((int)spawnPosition.X / 32, (int)spawnPosition.Y / 32, (int)BaseTiles.Water));
 
                 Villager villager = new Villager(this, spawnPosition, randomEmotion);
-                if (randomEmotion == EmotionType.Angry
-                    || randomEmotion == EmotionType.Happy
-                    || randomEmotion == EmotionType.Hateful)
+                if (randomEmotion == EmotionType.Angry)
                 {
 
                     if (MathExtra.RandomBool())
@@ -1333,6 +1331,11 @@ namespace EmotionIsland
                     {
                         villager.EmotionalTarget = villager.FindClosestNotAngryVillager();
                     }
+                }else if(randomEmotion == EmotionType.Terrified
+                    || randomEmotion == EmotionType.Admirative
+                    || randomEmotion == EmotionType.Happy
+                    || randomEmotion == EmotionType.Hateful){
+                        villager.EmotionalTarget = randomPlayer;
                 }
 
                 this.Add(villager);

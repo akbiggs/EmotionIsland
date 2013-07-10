@@ -54,7 +54,7 @@ namespace EmotionIsland
         public override Color Color { get { return this.Emotion.ToColor(); } }
 
         public Villager(World world, Vector2 pos, EmotionType emotion) 
-            : base(world, pos, new Vector2(32), TextureBin.Pixel, 3, emotion)
+            : base(world, pos, new Vector2(48), TextureBin.Pixel, 3, emotion)
         {
             MoveSpeed = 2.9f;
             CollidesWithWorld = true;
@@ -139,11 +139,7 @@ namespace EmotionIsland
         public override void Update()
         {
             Player player = this.FindClosestPlayer();
-            if (player == null)
-            {
-                World.Remove(this);
-            }
-            if (player != null && Vector2.DistanceSquared(player.Position, this.Position) >= 900000)
+            if (player == null || Vector2.DistanceSquared(player.Position, this.Position) >= 900000)
             {
                 World.Remove(this);
             }
@@ -268,7 +264,7 @@ namespace EmotionIsland
         public override void AngryUpdate()
         {
             this.NextPosition = this.EmotionalTarget.Position;
-            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(7, 2))
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(50, 2))
             {
                 this.Attack(this.EmotionalTarget);
             }
@@ -417,6 +413,7 @@ namespace EmotionIsland
 
         public override void OnCollide(GameObject gameObject)
         {
+            this.NextPosition = this.Position;
             if (gameObject is BeamParticle)
             {
                 BeamParticle particle = (BeamParticle) gameObject;
