@@ -9,14 +9,12 @@ namespace EmotionIsland
     {
         public static EmotionType RandomEmotion()
         {
-            int roll = MathExtra.RandomInt(0, 8);
+            int roll = MathExtra.RandomInt(0, 6);
             if (roll == 0) return EmotionType.Angry;
             if (roll == 1) return EmotionType.Sad;
             if (roll == 2) return EmotionType.Terrified;
-            if (roll == 3) return EmotionType.Happy;
+            if (roll == 3) return EmotionType.Vigilant;
             if (roll == 4) return EmotionType.Hateful;
-            if (roll == 5) return EmotionType.Vigilant;
-            if (roll == 6) return EmotionType.Amazed;
 
             return EmotionType.Neutral;
         }
@@ -35,7 +33,7 @@ namespace EmotionIsland
             };
 
         private const float EMOTION_THRESHOLD = 0.5f;
-        private const float EMOTION_INCREMENT = 0.10f;
+        private const float EMOTION_INCREMENT = 0.15f;
 
         // range -1 to 1 depending on level of emotion
         private float happyLevel = 0;

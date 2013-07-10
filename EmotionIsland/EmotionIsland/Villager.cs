@@ -268,7 +268,7 @@ namespace EmotionIsland
         public override void AngryUpdate()
         {
             this.NextPosition = this.EmotionalTarget.Position;
-            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(40, 2))
+            if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(7, 2))
             {
                 this.Attack(this.EmotionalTarget);
             }
@@ -290,7 +290,7 @@ namespace EmotionIsland
         public override void TerrifiedUpdate()
         {
             Vector2 fleeDirection = -DirectionToTarget;
-            if (Vector2.DistanceSquared(this.Position, this.EmotionalTarget.Position) < Math.Pow(400, 2))
+            if (Vector2.DistanceSquared(this.Position, this.EmotionalTarget.Position) < Math.Pow(450, 2))
             {
                 this.NextPosition = this.EmotionalTarget.Position + 400*fleeDirection;
             }
@@ -321,6 +321,16 @@ namespace EmotionIsland
         {
             this.HappyUpdate();
             base.AdmirativeUpdate();
+        }
+
+        public override void VigilantUpdate()
+        {
+            if (this.EmotionalTarget != null)
+                this.AngryUpdate();
+            else
+                this.NeutralUpdate();
+
+            base.VigilantUpdate();
         }
 
         public override void OnEmotionChanged(GameObject source)
@@ -424,10 +434,24 @@ namespace EmotionIsland
             else if (gameObject is Villager)
             {
                 Villager villager = ((Villager) gameObject);
-                if (this.IsAngry && gameObject != this && (villager.EmotionType != EmotionType.Angry || villager.EmotionType != EmotionType.Hateful))
+                if (this.EmotionType == global::EmotionIsland.EmotionType.Angry
+                    && villager.EmotionType != global::EmotionIsland.EmotionType.Angry)
                 {
-                    this.Attack(gameObject);
+                    this.EmotionalTarget = villager;
                 }
+                else if (this.EmotionType == EmotionType.Vigilant && villager.EmotionType != EmotionType.Vigilant)
+                {
+                    this.EmotionalTarget = villager;
+                }
+            }
+            else if (gameObject is Player)
+            {
+                 if (this.EmotionType == global::EmotionIsland.EmotionType.Angry ||
+                     this.EmotionType == global::EmotionIsland.EmotionType.Vigilant)
+                 {
+                     this.EmotionalTarget = gameObject;
+                 }
+                
             }
             base.OnCollide(gameObject);
         }

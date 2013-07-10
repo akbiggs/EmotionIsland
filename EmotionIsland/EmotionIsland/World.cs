@@ -1177,7 +1177,7 @@ namespace EmotionIsland
                     animationCounter = 0;
             }
 
-            if (++this.Timer-spawnTime >= 0 && !this.PartyWiped)
+            if (++this.Timer - spawnTime >= 0 && !this.PartyWiped && this.villagers.Count < 150)
             {
                 if (SpawnWaveOfVillagers())
                 {
@@ -1219,6 +1219,10 @@ namespace EmotionIsland
                     {
                         villager.HandleCollision(other);
                     }
+                }
+                foreach (Player player in Players)
+                {
+                    villager.HandleCollision(player);
                 }
             }
 
@@ -1318,11 +1322,19 @@ namespace EmotionIsland
                 } while (checkTile((int)spawnPosition.X / 32, (int)spawnPosition.Y / 32, (int)BaseTiles.Water));
 
                 Villager villager = new Villager(this, spawnPosition, randomEmotion);
-                Villager closestNonAngry = villager.FindClosestNotAngryVillager();
-                if (MathExtra.RandomBool())
-                    villager.EmotionalTarget = randomPlayer;
-                else
-                    villager.EmotionalTarget = closestNonAngry;
+                if (randomEmotion == EmotionType.Angry
+                    || randomEmotion == EmotionType.Happy
+                    || randomEmotion == EmotionType.Hateful)
+                {
+
+                    if (MathExtra.RandomBool())
+                        villager.EmotionalTarget = randomPlayer;
+                    else
+                    {
+                        villager.EmotionalTarget = villager.FindClosestNotAngryVillager();
+                    }
+                }
+
                 this.Add(villager);
             }
             return true;
