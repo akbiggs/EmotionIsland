@@ -23,6 +23,8 @@ namespace EmotionIsland
             get { return false; }
         }
 
+        
+
         private string lastDirection;
 
         public override FacingDirection FacingDirection
@@ -68,6 +70,7 @@ namespace EmotionIsland
 
         private PlayerKeyBindings keyBindings;
         private int playFireTimer;
+        private Color gunColor;
 
         public Player(World world, Vector2 pos, PlayerNumber pn) : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, START_HEALTH)
         {
@@ -112,7 +115,8 @@ namespace EmotionIsland
                 };
 
             this.GunTexture = TextureBin.Get("guns");
-            this.GunSourceRect = new Rectangle(0, 32, 32, 32);
+            this.gunColor = this.Emotion.ToColor();
+            this.GunSourceRect = new Rectangle(0, randEmotionNum*32, 32, 32);
 
             lastDirection = "upper";
             this.ChangeAnimation("walk_upper");
@@ -267,7 +271,7 @@ namespace EmotionIsland
 
         private void DrawGun(SpriteBatch spr)
         {
-            spr.Draw(GunTexture, this.Center, GunSourceRect, this.Color, 
+            spr.Draw(GunTexture, this.Center, GunSourceRect, this.gunColor, 
                 FacingDirection == FacingDirection.Right ? -GetGunRotation() : this.GetGunRotation(), GetGunPosition(), 1,
                 FacingDirection == FacingDirection.Right ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
         }
