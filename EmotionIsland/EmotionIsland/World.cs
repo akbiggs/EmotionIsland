@@ -54,6 +54,7 @@ namespace EmotionIsland
 
         private BufferedList<EmotionBeam> emotionBeams = new BufferedList<EmotionBeam>();
         private BufferedList<Bullet> bullets = new BufferedList<Bullet>();
+        private BufferedList<Treasure> treasures = new BufferedList<Treasure>();
 
         private Random rand;
         private int spawnTime = 500;
@@ -523,7 +524,7 @@ namespace EmotionIsland
                     }
                     else if (checkTile(c, r, (int)BaseTiles.Mountain))
                     {
-                        int floorTile = rand.Next(0, 3);
+                        int floorTile = rand.Next(0, 7);
                         if (floorTile == 0)
                         {
                             tiles[tile] = 47;
@@ -535,6 +536,10 @@ namespace EmotionIsland
                         else if (floorTile == 2)
                         {
                             tiles[tile] = 19;
+                        }
+                        else
+                        {
+                            tiles[tile] = 66 + (floorTile - 3);
                         }
                     }
                 }
@@ -560,6 +565,8 @@ namespace EmotionIsland
 
                 int posx = (int)origin.X;
                 int posy = (int)origin.Y;
+                Add(new Treasure(this, new Vector2(posx*32, (posy+3)*32)));
+                tempTiles[posx + (posy + 3) * width] = (int)BaseTiles.Doodad;
                 for (int house = 0; house < numHouses; house++)
                 {
                     if (checkTile(posx, posy, (int)BaseTiles.Grass) &&
@@ -1108,6 +1115,10 @@ namespace EmotionIsland
             {
                 this.bullets.BufferAdd((Bullet) obj);
             }
+            else if (obj is Treasure)
+            {
+                this.treasures.Add((Treasure)obj);
+            }
             else
             {
                 throw new InvalidOperationException("Don't have a handler for adding this type of object");
@@ -1458,6 +1469,11 @@ namespace EmotionIsland
             foreach (var bullet in bullets)
             {
                 bullet.Draw(spr);
+            }
+
+            foreach(Treasure treasure in treasures)
+            {
+                treasure.Draw(spr);
             }
 
             spr.End();
