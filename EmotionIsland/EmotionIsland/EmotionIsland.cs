@@ -18,14 +18,27 @@ namespace EmotionIsland
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteFont font;
 
         private World world;
         public Color fadeColor = Color.Black;
         public static Color nextFade;
         private bool fadingTitle;
 
+        List<String> Creators;
+
         public EmotionIsland()
         {
+            Creators = new List<string>();
+            List<String> creators = new List<string> { "Artur Kink: Programmer", "Alexander Biggs: Programmer", "Andrew Wong: Artist" };
+            //Randomly order creators
+            while (creators.Count > 0)
+            {
+                int newIndex = MathExtra.RandomInt(creators.Count);
+                Creators.Add(creators[newIndex]);
+                creators.RemoveAt(newIndex);
+            }
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             Input.init();
@@ -59,7 +72,8 @@ namespace EmotionIsland
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             TextureBin.LoadContent(Content);
-
+            font = Content.Load<SpriteFont>("Tahoma");
+            
             this.world = new World();
             FadeTo(Color.Transparent);
             this.ShouldDrawTitle = true;
@@ -153,6 +167,13 @@ namespace EmotionIsland
             {
                 spriteBatch.Begin();
                 spriteBatch.Draw(TextureBin.Get("title"), new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                spriteBatch.DrawString(font, "A game by", new Vector2(20, 480), Color.Black);
+
+                for (int i = 0; i < 3; i++)
+                {
+                    spriteBatch.DrawString(font, Creators[i], new Vector2(20, 512 + i * 32), Color.Black);
+                }
+                
                 spriteBatch.End();
             }
 

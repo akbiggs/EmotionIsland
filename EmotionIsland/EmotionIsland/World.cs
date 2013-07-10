@@ -1316,10 +1316,15 @@ namespace EmotionIsland
             for (int i = 0; i < MathExtra.RandomInt(20, 30); i++)
             {
                 Vector2 spawnPosition = new Vector2(0,0);
+                counter = 0;
                 do
                 {
+                    counter++;
                     spawnPosition = randomPlayer.Position + spawnOffset + new Vector2(MathExtra.RandomInt(0, 200), MathExtra.RandomInt(0, 200));
-                } while (checkTile((int)spawnPosition.X / 32, (int)spawnPosition.Y / 32, (int)BaseTiles.Water));
+                } while (counter < 10 && (checkTile((int)spawnPosition.X / 32, (int)spawnPosition.Y / 32, (int)BaseTiles.Water) ||
+                    checkTile((int)spawnPosition.X / 32 + 1, (int)spawnPosition.Y / 32, (int)BaseTiles.Water) ||
+                    checkTile((int)spawnPosition.X / 32 - 1, (int)spawnPosition.Y / 32 + 1, (int)BaseTiles.Water) ||
+                    checkTile((int)spawnPosition.X / 32, (int)spawnPosition.Y / 32 - 1, (int)BaseTiles.Water)));
 
                 Villager villager = new Villager(this, spawnPosition, randomEmotion);
                 if (randomEmotion == EmotionType.Angry)
