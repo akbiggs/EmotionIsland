@@ -54,7 +54,7 @@ namespace EmotionIsland
         public override Color Color { get { return this.Emotion.ToColor(); } }
 
         public Villager(World world, Vector2 pos, EmotionType emotion) 
-            : base(world, pos, new Vector2(48), TextureBin.Pixel, 3, emotion)
+            : base(world, pos, new Vector2(32), TextureBin.Pixel, 3, emotion)
         {
             MoveSpeed = 2.9f;
             CollidesWithWorld = true;
@@ -161,14 +161,13 @@ namespace EmotionIsland
                     this.attackCoolDownTimer--;
                 }
 
-                base.Update();
+                    base.Update();
 
                 if (this.Velocity == Vector2.Zero)
                 {
                     this.body.ChangeAnimation("idle_" + this.GetEnding());
                 }
             }
-
             
         }
 
@@ -263,6 +262,10 @@ namespace EmotionIsland
 
         public override void AngryUpdate()
         {
+            if (this.EmotionalTarget == null)
+            {
+                this.EmotionalTarget = this.FindClosestPlayer();
+            }
             this.NextPosition = this.EmotionalTarget.Position;
             if (Vector2.DistanceSquared(this.Position, EmotionalTarget.Position) < Math.Pow(50, 2))
             {
@@ -329,6 +332,16 @@ namespace EmotionIsland
             base.VigilantUpdate();
         }
 
+        public override void AmazedUpdate()
+        {
+            this.NextPosition = this.EmotionalTarget.Position;
+            if (this.EmotionalTarget == null)
+            {
+                this.EmotionalTarget = this.FindClosestTreasure();
+            }
+            base.AmazedUpdate();
+        }
+
         public override void OnEmotionChanged(GameObject source)
         {
             if (this.EmotionType == EmotionType.Neutral)
@@ -340,10 +353,32 @@ namespace EmotionIsland
             {
                 this.EmotionalTarget = this.FindClosestNotAngryVillager();
             }
+            else if (this.EmotionType == EmotionType.Amazed)
+            {
+                this.EmotionalTarget = FindClosestTreasure();
+            }
+            else if (this.EmotionType == EmotionType.Happy || this.EmotionType == EmotionType.Admirative)
+            {
+                this.EmotionalTarget = FindClosestPlayer();
+            }
             else
             {
                 base.OnEmotionChanged(source);
             }
+        }
+
+        private Treasure FindClosestTreasure()
+        {
+            Treasure closestTreasure = World.treasures[0];
+            foreach (Treasure treasure in World.treasures)
+            {
+                if (Vector2.DistanceSquared(this.Position, treasure.Position)
+                    < Vector2.DistanceSquared(this.Position, closestTreasure.Position))
+                {
+                    closestTreasure = treasure;
+                }
+            }
+            return closestTreasure;
         }
 
         private Villager FindClosestVillager()
@@ -413,7 +448,6 @@ namespace EmotionIsland
 
         public override void OnCollide(GameObject gameObject)
         {
-            this.NextPosition = this.Position;
             if (gameObject is BeamParticle)
             {
                 BeamParticle particle = (BeamParticle) gameObject;
@@ -435,6 +469,13 @@ namespace EmotionIsland
                     && villager.EmotionType != global::EmotionIsland.EmotionType.Angry)
                 {
                     this.EmotionalTarget = villager;
+                }
+                else if (this.EmotionType == EmotionType.Hateful && villager.EmotionType != EmotionType.Hateful)
+                {
+                    if (CanAttack)
+                    {
+                        this.Attack(villager);
+                    }
                 }
                 else if (this.EmotionType == EmotionType.Vigilant && villager.EmotionType != EmotionType.Vigilant)
                 {

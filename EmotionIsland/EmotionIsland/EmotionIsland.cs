@@ -18,7 +18,8 @@ namespace EmotionIsland
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        SpriteFont font;
+        public static SpriteFont font;
+        public static SpriteFont fontTiny;
 
         private World world;
         public Color fadeColor = Color.Black;
@@ -54,7 +55,7 @@ namespace EmotionIsland
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = false;
-            //graphics.IsFullScreen = true;
+            graphics.IsFullScreen = true;
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 780;
 
@@ -73,6 +74,7 @@ namespace EmotionIsland
 
             TextureBin.LoadContent(Content);
             font = Content.Load<SpriteFont>("Tahoma");
+            fontTiny = Content.Load<SpriteFont>("TahomaTiny");
             
             this.world = new World();
             FadeTo(Color.Transparent);
@@ -104,8 +106,14 @@ namespace EmotionIsland
                 this.ShouldDrawTitle = false;
                 FadeTo(Color.Transparent);
             }
+#if !ARCADE
             if (Input.KeyPressed(Keys.Q))
                 world.GenerateWorld();
+            if(Input.KeyPressed(Keys.R)){
+                world.Players[0].Position = world.villages[MathExtra.RandomInt(world.villages.Count)];
+                world.Players[0].Position = new Vector2(world.Players[0].Position.X * 32, world.Players[0].Position.Y * 32);
+            }
+#endif
             if (nextFade != this.fadeColor)
             {
                 this.fadeColor = this.fadeColor.PushTowards(nextFade, 2);
@@ -157,11 +165,26 @@ namespace EmotionIsland
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             if (!this.ShouldDrawTitle)
             {
                 world.Draw(spriteBatch);
+                spriteBatch.Begin();
+
+                int completeCounter = 0;
+                foreach (Treasure treasure in world.treasures)
+                {
+                    if (treasure.Opened)
+                        completeCounter++;
+                }
+                
+                spriteBatch.DrawString(fontTiny, "Treasures Collected: " + completeCounter + "/" + world.treasures.Count, new Vector2(5, 5), Color.White);
+                spriteBatch.End();
+                if (completeCounter == world.treasures.Count)
+                {
+                    world.GenerateWorld();
+                }
             }
             else
             {

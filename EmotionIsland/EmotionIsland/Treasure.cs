@@ -14,7 +14,7 @@ namespace EmotionIsland
             this.Animations = new List<AnimationSet>
                 {
                     new AnimationSet("main", TextureBin.Get("treasure"), 1, 64, 64, 1),
-                    new AnimationSet("open", TextureBin.Get("treasure"), 5, 64, 64, FrameDuration, -1, false, 1)
+                    new AnimationSet("open", TextureBin.Get("treasure"), 5, 64, 64, FrameDuration, 5, false, 0)
                 };
             this.ChangeAnimation("main");
         }

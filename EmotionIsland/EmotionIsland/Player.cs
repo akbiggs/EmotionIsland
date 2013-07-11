@@ -355,6 +355,13 @@ namespace EmotionIsland
             {
                 this.SubTypeCollide((SlashAttack)obj);
             }
+
+            if (obj is Treasure)
+            {
+                Treasure treasure = (Treasure)obj;
+                treasure.Open();
+            }
+
             base.OnCollide(obj);
         }
 

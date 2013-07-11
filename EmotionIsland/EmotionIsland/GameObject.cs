@@ -41,6 +41,8 @@ namespace EmotionIsland
 
         public bool CollidesWithWorld;
 
+        public Vector2 overrideTargetPosition;
+
         // TODO: Implement this. We need this for garbage collecting dead stuff.
         public bool IsOffscreen { get { return false; } }
 
@@ -100,13 +102,11 @@ namespace EmotionIsland
                         nextPosition = new Vector2(this.Position.X - (intersection.Width + 1), this.Position.Y);
                     else
                         nextPosition = new Vector2(this.Position.X + (intersection.Width + 1), this.Position.Y);
-                    
                 }
                 else
                 {
-
                     if (this.Center.Y < gameObject.Center.Y)
-                         nextPosition = new Vector2(this.Position.X, this.Position.Y - (intersection.Height + 1));
+                        nextPosition = new Vector2(this.Position.X, this.Position.Y - (intersection.Height + 1));
                     else
                         nextPosition = new Vector2(this.Position.X, this.Position.Y + (intersection.Height + 1));
                 }
@@ -114,9 +114,10 @@ namespace EmotionIsland
                 if (this is Villager)
                 {
                     Villager villager = (Villager)this;
-                    villager.NextPosition = nextPosition;
+                    villager.overrideTargetPosition = nextPosition;
                 }
             }
+            
         }
 
         public virtual void Update()

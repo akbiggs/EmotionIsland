@@ -57,7 +57,7 @@ namespace EmotionIsland
         
         public virtual void UpdateAI(EmotionType emotion)
         {
-            if (this.HasEmotionTarget && !this.IsStunned) {
+            if (!this.IsStunned) {
                 if (emotion == EmotionType.Angry)
                 {
                     this.AngryUpdate();
@@ -92,10 +92,16 @@ namespace EmotionIsland
                     }
                     else
                     {
-                        Vector2 displacement = this.Position.PushTowards(this.NextPosition, this.MoveSpeed*Vector2.One);
-                        this.Velocity = displacement - this.Position;
-                        if (this.Velocity.LengthSquared() < 0.1f*0.1f)
-                            this.Velocity = Vector2.Zero;
+                        if (overrideTargetPosition != Vector2.Zero)
+                        {
+                            this.NextPosition = overrideTargetPosition;
+                            overrideTargetPosition = Vector2.Zero;
+                        }
+                            Vector2 displacement = this.Position.PushTowards(this.NextPosition, this.MoveSpeed * Vector2.One);
+                            this.Velocity = displacement - this.Position;
+                            if (this.Velocity.LengthSquared() < 0.1f * 0.1f)
+                                this.Velocity = Vector2.Zero;
+                        
                     }
                 }
             }
@@ -195,7 +201,7 @@ namespace EmotionIsland
 
         public virtual void AmazedUpdate()
         {
-            this.NeutralUpdate();
+            //this.NeutralUpdate();
         }
 
         public virtual void HatefulUpdate()
@@ -222,7 +228,7 @@ namespace EmotionIsland
 
         public virtual void Stun()
         {
-            this.stunTimer = 50;
+            this.stunTimer = 40;
         }
     }
 }

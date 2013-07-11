@@ -54,12 +54,12 @@ namespace EmotionIsland
 
         private BufferedList<EmotionBeam> emotionBeams = new BufferedList<EmotionBeam>();
         private BufferedList<Bullet> bullets = new BufferedList<Bullet>();
-        private BufferedList<Treasure> treasures = new BufferedList<Treasure>();
+        public BufferedList<Treasure> treasures = new BufferedList<Treasure>();
 
         private Random rand;
         private int spawnTime = 500;
 
-        List<Vector2> villages;
+        public List<Vector2> villages;
 
         public World()
         {
@@ -74,9 +74,9 @@ namespace EmotionIsland
 
 
             //this.villagers.Add(new Villager(this, new Vector2(200, 80), EmotionType.Angry));
-            this.villagers.Add(new Villager(this, new Vector2(200, 120), EmotionType.Sad));
+            //this.villagers.Add(new Villager(this, new Vector2(200, 120), EmotionType.Sad));
             //this.villagers.Add(new Villager(this, new Vector2(200, 160), EmotionType.Happy));
-            this.villagers.Add(new Villager(this, new Vector2(200, 200), EmotionType.Terrified));
+            //this.villagers.Add(new Villager(this, new Vector2(200, 200), EmotionType.Terrified));
             //this.villagers.Add(new Villager(this, new Vector2(200, 240), EmotionType.Neutral));
             //this.villagers.ForEach((villager) => villager.EmotionalTarget = players[0]);
         }
@@ -161,7 +161,7 @@ namespace EmotionIsland
                     origin.X = rand.Next(0, width);
                     origin.Y = rand.Next(0, height);
                 }
-                recursiveGrowth((int)origin.X, (int)origin.Y, (int)BaseTiles.Water, (int)BaseTiles.Grass, rand.Next(40, 130));
+                recursiveGrowth((int)origin.X, (int)origin.Y, (int)BaseTiles.Water, (int)BaseTiles.Grass, rand.Next(10, 230));
             }
 
             //Create beaches
@@ -547,14 +547,27 @@ namespace EmotionIsland
 
             //Create villages
             villages = new List<Vector2>();
-            int numVillages = rand.Next(2, 5);
+            villages.Clear();
+            treasures.Clear();
+            int numVillages = rand.Next(3, 5);
             for (int village = 0; village < numVillages; village++)
             {
                 Vector2 origin = new Vector2(0, 0);
                 while (!checkTile((int)origin.X, (int)origin.Y, (int)BaseTiles.Grass)
-                    && !checkTile((int)origin.X, (int)origin.Y+5, (int)BaseTiles.Grass)
-                    && !checkTile((int)origin.X + 5, (int)origin.Y, (int)BaseTiles.Grass)
-                    && !checkTile((int)origin.X + 5, (int)origin.Y + 5, (int)BaseTiles.Grass))
+                    || !checkTile((int)origin.X+1, (int)origin.Y, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X + 1, (int)origin.Y + 1, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X, (int)origin.Y, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X +2, (int)origin.Y, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X, (int)origin.Y+2, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X + 1, (int)origin.Y + 2, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X + 2, (int)origin.Y + 1, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X - 1, (int)origin.Y - 1, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X + 2, (int)origin.Y + 2, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X , (int)origin.Y - 1, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X, (int)origin.Y+3, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X - 1, (int)origin.Y, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X, (int)origin.Y - 1, (int)BaseTiles.Grass)
+                    || !checkTile((int)origin.X - 1, (int)origin.Y - 1, (int)BaseTiles.Grass))
                 {
                     origin.X = rand.Next(0, width);
                     origin.Y = rand.Next(0, height);
@@ -565,8 +578,8 @@ namespace EmotionIsland
 
                 int posx = (int)origin.X;
                 int posy = (int)origin.Y;
-                Add(new Treasure(this, new Vector2(posx*32, (posy+3)*32)));
-                tempTiles[posx + (posy + 3) * width] = (int)BaseTiles.Doodad;
+                Add(new Treasure(this, new Vector2(posx*32, (posy+2)*32)));
+                tempTiles[posx + (posy + 2) * width] = (int)BaseTiles.Doodad;
                 for (int house = 0; house < numHouses; house++)
                 {
                     if (checkTile(posx, posy, (int)BaseTiles.Grass) &&
@@ -577,7 +590,6 @@ namespace EmotionIsland
                             checkTile(posx+ 1, posy+ 1, (int)BaseTiles.Grass) &&
                             checkTile(posx- 1, posy- 1, (int)BaseTiles.Grass))
                     {
-                        players[0].Position = new Vector2(villages[0].X*32, villages[0].Y*32);
                         int tile = posx + posy * width;
 
                         int houseType = rand.Next(0, 3);
@@ -810,7 +822,7 @@ namespace EmotionIsland
                         checkTile(c + 1, r+1, (int)BaseTiles.Water)){
                             bool canBeBridged = true;
                             int i = 1;
-                            for (i = 1; i < 15; i++)
+                            for (i = 1; i < 25; i++)
                             {
                                 if (checkTile(c + i, r, (int)BaseTiles.Sand) &&
                                 checkTile(c + i, r + 1, (int)BaseTiles.Sand))
@@ -864,7 +876,7 @@ namespace EmotionIsland
                     {
                         bool canBeBridged = true;
                         int i = 1;
-                        for (i = 1; i < 15; i++)
+                        for (i = 1; i < 25; i++)
                         {
                             if (checkTile(c, r+i, (int)BaseTiles.Sand) &&
                             checkTile(c + 1, r + i, (int)BaseTiles.Sand))
@@ -961,6 +973,7 @@ namespace EmotionIsland
                         
                     }
 
+                    //Sand doodads
                     if (checkTile(c, r, (int)BaseTiles.Sand) &&
                         checkTile(c, r + 1, (int)BaseTiles.Sand) &&
                         checkTile(c, r - 1, (int)BaseTiles.Sand) &&
@@ -968,6 +981,7 @@ namespace EmotionIsland
                         checkTile(c - 1, r, (int)BaseTiles.Sand) &&
                         checkTile(c + 1, r + 1, (int)BaseTiles.Sand) &&
                         checkTile(c + 2, r - 2, (int)BaseTiles.Sand) &&
+                        checkTile(c, r + 2, (int)BaseTiles.Sand) &&
                         checkTile(c - 1, r - 1, (int)BaseTiles.Sand) && rand.Next(0, 4) == 0)
                     {
                         if (rand.Next(0, 5) == 0)
@@ -1016,6 +1030,15 @@ namespace EmotionIsland
 
                 }
             }
+
+            Vector2 startPosition = new Vector2(0, 0);
+            do{
+                startPosition = new Vector2(rand.Next(0, width), rand.Next(0, height));
+            }while(!checkTile((int)startPosition.X, (int)startPosition.Y, (int)BaseTiles.Sand) ||
+                !checkTile((int)startPosition.X+1, (int)startPosition.Y, (int)BaseTiles.Sand) ||
+                !checkTile((int)startPosition.X, (int)startPosition.Y+1, (int)BaseTiles.Sand) ||
+                !checkTile((int)startPosition.X+1, (int)startPosition.Y+1, (int)BaseTiles.Sand));
+            players[0].Position = new Vector2((int)startPosition.X * 32, (int)startPosition.Y * 32);
 
         }
 
@@ -1167,7 +1190,7 @@ namespace EmotionIsland
                 }
             }
 #if KEYBOARD
-            for (int i = 2; i <= 2; i++)
+            for (int i = 1; i <= 2; i++)
 #else
             for (int i = 2; i <= 4; i++)
 #endif           
@@ -1207,6 +1230,10 @@ namespace EmotionIsland
                 foreach (var villager in Villagers)
                 {
                     player.HandleCollision(villager);
+                }
+                foreach (Treasure treasure in treasures)
+                {
+                    player.HandleCollision(treasure);
                 }
             }
 
@@ -1252,6 +1279,11 @@ namespace EmotionIsland
             foreach (var bullet in bullets)
             {
                 bullet.Update();
+            }
+
+            foreach (Treasure treasure in treasures)
+            {
+                treasure.Update();
             }
 
             players.ApplyBuffers();
