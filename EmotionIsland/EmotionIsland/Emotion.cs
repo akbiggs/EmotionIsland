@@ -36,8 +36,8 @@ namespace EmotionIsland
         private const float EMOTION_INCREMENT = 0.15f;
 
         // range -1 to 1 depending on level of emotion
-        private float happyLevel = 0;
-        private float angerLevel = 0;
+        public float happyLevel = 0;
+        public float angerLevel = 0;
 
         public EmotionType EmotionType
         {

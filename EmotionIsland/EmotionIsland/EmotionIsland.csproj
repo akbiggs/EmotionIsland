@@ -87,6 +87,7 @@
     <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Helpers\TextureHelper.cs" />
     <Compile Include="Helpers\VectorHelper.cs" />
+    <Compile Include="HighScores.cs" />
     <Compile Include="IEmotionalAI.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Input_.cs" />

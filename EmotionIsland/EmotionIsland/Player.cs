@@ -23,7 +23,7 @@ namespace EmotionIsland
             get { return false; }
         }
 
-        
+        public static int LivesUsed;
 
         private string lastDirection;
 
@@ -74,6 +74,7 @@ namespace EmotionIsland
 
         public Player(World world, Vector2 pos, PlayerNumber pn) : base(world, pos, new Vector2(32, 32), TextureBin.Pixel, START_HEALTH)
         {
+            LivesUsed++;
             CollidesWithWorld = true;
             
             this.PlayerNumber = pn;

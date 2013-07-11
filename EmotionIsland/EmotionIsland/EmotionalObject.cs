@@ -111,10 +111,13 @@ namespace EmotionIsland
             }
         }
 
-        public virtual void InfectWithEmotion(EmotionType type, GameObject source)
+        public virtual bool InfectWithEmotion(EmotionType type, GameObject source)
         {
             EmotionType old = this.EmotionType;
             this.Stun();
+
+            float angerLevel = this.Emotion.angerLevel;
+            float happyLevel = this.Emotion.happyLevel;
 
             if (type == EmotionType.Angry)
             {
@@ -158,7 +161,13 @@ namespace EmotionIsland
             if (old != this.EmotionType)
             {
                 this.OnEmotionChanged(source);
+                return true;
             }
+
+            if (this.Emotion.angerLevel == angerLevel && this.Emotion.happyLevel == happyLevel)
+                return false;
+
+            return true;
         }
 
         public virtual void Anger(GameObject source)

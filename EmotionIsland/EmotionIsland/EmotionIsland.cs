@@ -28,6 +28,8 @@ namespace EmotionIsland
 
         List<String> Creators;
 
+        public static HighScores highScores;
+
         public EmotionIsland()
         {
             Creators = new List<string>();
@@ -43,6 +45,7 @@ namespace EmotionIsland
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             Input.init();
+            highScores = new HighScores();
         }
 
         /// <summary>
@@ -55,7 +58,12 @@ namespace EmotionIsland
         {
             // TODO: Add your initialization logic here
             IsMouseVisible = false;
+            
+#if ARCADE
             graphics.IsFullScreen = true;
+#else
+            graphics.IsFullScreen = false;
+#endif
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 780;
 
@@ -99,7 +107,10 @@ namespace EmotionIsland
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Input.IsKeyDown(Keys.I))
+            {
+                highScores.saveScores();
                 this.Exit();
+            }
 
             if (fadingTitle && this.fadeColor == Color.Black)
             {
@@ -184,6 +195,7 @@ namespace EmotionIsland
                 if (completeCounter == world.treasures.Count)
                 {
                     world.GenerateWorld();
+                    highScores.addScore(new HighScores.Score() { time = DateTime.Now, livesUsed = Player.LivesUsed, name = "" });
                 }
             }
             else

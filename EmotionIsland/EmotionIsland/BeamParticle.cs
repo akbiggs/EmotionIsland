@@ -34,7 +34,7 @@ namespace EmotionIsland
         public override void Update()
         {
             float distance = Vector2.DistanceSquared(origin, Position);
-            if (distance > 100000)
+            if (distance > 150000)
             {
                 IsAlive = false;
                 base.Update();
@@ -44,8 +44,8 @@ namespace EmotionIsland
             Vector2 originalVelocity = Velocity;
 
             Random rand = new Random();
-            this.Velocity = new Vector2(this.Velocity.X + (float)((rand.NextDouble()*10) * Math.Sin(distance/1000)),
-                this.Velocity.Y + (float)((rand.NextDouble() * 10) * Math.Cos(distance / 1000)));
+            this.Velocity = new Vector2(this.Velocity.X + (float)((rand.NextDouble()*10) * Math.Sin(distance/1500)),
+                this.Velocity.Y + (float)((rand.NextDouble() * 10) * Math.Cos(distance / 1500)));
 
             base.Update();
             Velocity = originalVelocity;

@@ -451,8 +451,10 @@ namespace EmotionIsland
             if (gameObject is BeamParticle)
             {
                 BeamParticle particle = (BeamParticle) gameObject;
-                this.InfectWithEmotion(particle.EmotionType, particle.OwnerBeam.Owner);
-                particle.OwnerBeam.Particles.BufferRemove(particle);
+                if (this.InfectWithEmotion(particle.EmotionType, particle.OwnerBeam.Owner))
+                {
+                    particle.OwnerBeam.Particles.BufferRemove(particle);
+                }
             }
             else if (gameObject is SlashAttack)
             {
